@@ -1,0 +1,3444 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExamNova - Online Examination & Quiz System</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            nova: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              200: '#C7D2FE',
+              300: '#A5B4FC',
+              400: '#818CF8',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA',
+              800: '#3730A3',
+              900: '#312E81',
+              950: '#1E1B4B'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom CSS Embedded for Self-Contained Offline & Online Execution -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --secondary: #7C3AED;
+      --accent: #2563EB;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --bg-gradient: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #1E3A8A 100%);
+      --card-bg: #FFFFFF;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F8FAFC;
+      color: #1E293B;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .glass-nav {
+      background: rgba(30, 27, 75, 0.95);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modern-shadow {
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.08), 0 8px 10px -6px rgba(79, 70, 229, 0.04);
+    }
+
+    .modern-shadow-lg {
+      box-shadow: 0 20px 30px -10px rgba(79, 70, 229, 0.15), 0 10px 15px -5px rgba(79, 70, 229, 0.08);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1F5F9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+
+    .palette-btn {
+      width: 38px;
+      height: 38px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .palette-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .palette-answered {
+      background-color: #10B981 !important;
+      color: white !important;
+      border-color: #059669 !important;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .palette-current {
+      background-color: #4F46E5 !important;
+      color: white !important;
+      border-color: #3730A3 !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35);
+    }
+
+    .palette-unanswered {
+      background-color: #F1F5F9;
+      color: #64748B;
+      border: 1px solid #E2E8F0;
+    }
+
+    .palette-review {
+      background-color: #F59E0B !important;
+      color: white !important;
+      border-color: #D97706 !important;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    }
+
+    .quiz-option {
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+    }
+    .quiz-option:hover {
+      border-color: #818CF8;
+      background-color: #F5F3FF;
+    }
+    .quiz-option.selected {
+      border-color: #6366F1;
+      background-color: #EEF2FF;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+    }
+
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.03); }
+    }
+
+    .pulse-timer {
+      animation: pulse-subtle 2s infinite;
+    }
+
+    .circle-progress {
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      transition: stroke-dashoffset 1s ease-in-out;
+    }
+
+    .presenter-bar {
+      background: linear-gradient(90deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
+      border-bottom: 2px solid #818CF8;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- ==========================================
+       PRESENTATION CONTROLLER / QUICK SWITCH BAR
+       ========================================== -->
+  <header class="presenter-bar text-white px-4 py-2 sticky top-0 z-50 flex flex-wrap items-center justify-between text-xs sm:text-sm shadow-md select-none">
+    <div class="flex items-center space-x-2 mr-3">
+      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-indigo-500 text-white animate-pulse">
+        <i class="fa-solid fa-chalkboard-user mr-1.5"></i> DEMO MODE
+      </span>
+      <span class="font-semibold text-slate-200 hidden md:inline">ExamNova Quick Navigator:</span>
+    </div>
+
+    <!-- Quick Switch Navigation Pills -->
+    <div class="flex items-center space-x-1.5 overflow-x-auto py-1">
+      <button onclick="navigateTo('view-login')" class="nav-pill px-2.5 py-1 rounded bg-indigo-950/60 hover:bg-indigo-600 transition text-slate-200 font-medium">
+        <i class="fa-solid fa-arrow-right-to-bracket mr-1 text-xs"></i> 1. Login
+      </button>
+      <button onclick="switchRoleAndNavigate('student', 'view-student-dashboard')" class="nav-pill px-2.5 py-1 rounded bg-indigo-950/60 hover:bg-indigo-600 transition text-slate-200 font-medium">
+        <i class="fa-solid fa-user-graduate mr-1 text-xs"></i> 2. Student Home
+      </button>
+      <button onclick="switchRoleAndNavigate('teacher', 'view-teacher-dashboard')" class="nav-pill px-2.5 py-1 rounded bg-indigo-950/60 hover:bg-indigo-600 transition text-slate-200 font-medium">
+        <i class="fa-solid fa-chalkboard-teacher mr-1 text-xs"></i> 3. Teacher Dashboard
+      </button>
+      <button onclick="quickStartDemoExam()" class="nav-pill px-2.5 py-1 rounded bg-indigo-950/60 hover:bg-indigo-600 transition text-slate-200 font-medium">
+        <i class="fa-solid fa-file-pen mr-1 text-xs"></i> 4. Exam Page
+      </button>
+      <button onclick="quickViewResults()" class="nav-pill px-2.5 py-1 rounded bg-indigo-950/60 hover:bg-indigo-600 transition text-slate-200 font-medium">
+        <i class="fa-solid fa-trophy mr-1 text-xs"></i> 5. Results
+      </button>
+      <button onclick="navigateTo('view-history-profile')" class="nav-pill px-2.5 py-1 rounded bg-indigo-950/60 hover:bg-indigo-600 transition text-slate-200 font-medium">
+        <i class="fa-solid fa-clock-rotate-left mr-1 text-xs"></i> 6. History & Profile
+      </button>
+    </div>
+
+    <div class="flex items-center space-x-2 ml-auto mt-1 sm:mt-0">
+      <button onclick="resetDemoData()" title="Reset mock data to factory state" class="px-2 py-1 text-xs bg-rose-900/60 hover:bg-rose-700 text-rose-200 rounded transition flex items-center">
+        <i class="fa-solid fa-rotate-right mr-1"></i> Reset Data
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       MAIN APP HEADER (Brand + Current Profile)
+       ========================================== -->
+  <nav id="app-topbar" class="bg-indigo-950 text-white px-6 py-3.5 flex items-center justify-between border-b border-indigo-900 shadow-sm">
+    <!-- Brand -->
+    <div class="flex items-center space-x-3 cursor-pointer" onclick="goToHome()">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+        <i class="fa-solid fa-graduation-cap text-xl"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="text-xl font-extrabold tracking-tight font-heading text-white">ExamNova</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-indigo-900/80 text-indigo-300 font-medium hidden sm:inline">v2.4 Live</span>
+        </div>
+        <p class="text-xs text-indigo-300/80 -mt-0.5">Online Examination & Quiz System</p>
+      </div>
+    </div>
+
+    <!-- Center Tagline -->
+    <div class="hidden lg:flex items-center space-x-4 text-xs tracking-wider uppercase text-indigo-200/90 font-medium">
+      <span class="hover:text-white transition">Learn</span>
+      <span>•</span>
+      <span class="hover:text-white transition">Test</span>
+      <span>•</span>
+      <span class="hover:text-white transition">Improve</span>
+    </div>
+
+    <!-- User Profile & Notifications -->
+    <div class="flex items-center space-x-4">
+      <!-- Notification Bell -->
+      <button onclick="showNotificationToast()" class="relative p-2 text-indigo-200 hover:text-white hover:bg-indigo-900/50 rounded-full transition" title="Notifications">
+        <i class="fa-regular fa-bell text-lg"></i>
+        <span class="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
+      </button>
+
+      <!-- Active User Badge -->
+      <div class="flex items-center space-x-3 pl-3 border-l border-indigo-800">
+        <div id="topbar-avatar" class="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow">
+          J
+        </div>
+        <div class="hidden sm:block text-left">
+          <div id="topbar-username" class="text-xs font-semibold text-white leading-tight">John</div>
+          <div id="topbar-role" class="text-[10px] text-indigo-300 capitalize">Student</div>
+        </div>
+        <button onclick="handleLogout()" class="text-indigo-300 hover:text-rose-400 p-1.5 transition ml-1" title="Logout">
+          <i class="fa-solid fa-power-off text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==========================================
+       CONTAINER FOR ALL VIEWS
+       ========================================== -->
+  <main class="flex-1 flex flex-col">
+
+    <!-- ##########################################
+         VIEW 1: LOGIN PAGE (Student / Teacher)
+         ########################################## -->
+    <section id="view-login" class="app-view flex-1 flex items-center justify-center p-4 sm:p-8 bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900">
+      <div class="w-full max-w-5xl bg-white/10 backdrop-blur-xl border border-white/15 rounded-3xl overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
+        
+        <!-- Left Branding & Illustration Banner (5 cols) -->
+        <div class="lg:col-span-5 p-8 sm:p-10 bg-gradient-to-br from-indigo-900/80 to-purple-950/90 text-white flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10 relative overflow-hidden">
+          <!-- Background glow circles -->
+          <div class="absolute -top-16 -left-16 w-56 h-56 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-400 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                <i class="fa-solid fa-graduation-cap text-2xl"></i>
+              </div>
+              <div>
+                <h1 class="text-2xl font-extrabold tracking-tight font-heading">ExamNova</h1>
+                <p class="text-xs text-indigo-200">Online Examination & Quiz System</p>
+              </div>
+            </div>
+
+            <!-- Graphic / Laptop Mockup Illustration -->
+            <div class="my-6 text-center">
+              <div class="w-32 h-32 mx-auto rounded-3xl bg-gradient-to-tr from-indigo-500/30 to-purple-500/30 border border-white/20 flex items-center justify-center text-indigo-300 relative">
+                <i class="fa-solid fa-laptop-code text-5xl text-indigo-200"></i>
+                <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs shadow-md">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+              <p class="mt-4 text-sm font-medium text-indigo-100">Smart Assessments & Real-Time Analytics</p>
+              <p class="text-xs text-indigo-300/80 mt-1 max-w-xs mx-auto">Learn • Test • Improve with automated grading and instant feedback.</p>
+            </div>
+          </div>
+
+          <!-- Feature Icons at Bottom -->
+          <div class="grid grid-cols-3 gap-3 pt-6 border-t border-white/10 text-center">
+            <div class="flex flex-col items-center">
+              <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-indigo-300 mb-1.5">
+                <i class="fa-solid fa-shield-halved text-sm"></i>
+              </div>
+              <span class="text-[11px] font-semibold text-slate-200">Secure</span>
+              <span class="text-[9px] text-indigo-300">Your Data</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-indigo-300 mb-1.5">
+                <i class="fa-solid fa-mobile-screen-button text-sm"></i>
+              </div>
+              <span class="text-[11px] font-semibold text-slate-200">Flexible</span>
+              <span class="text-[9px] text-indigo-300">Any Device</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-indigo-300 mb-1.5">
+                <i class="fa-solid fa-headset text-sm"></i>
+              </div>
+              <span class="text-[11px] font-semibold text-slate-200">Support</span>
+              <span class="text-[9px] text-indigo-300">24/7 Live</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Login Card (7 cols) -->
+        <div class="lg:col-span-7 p-8 sm:p-12 bg-white flex flex-col justify-center">
+          <div class="max-w-md mx-auto w-full">
+            <div class="text-center mb-8">
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">Welcome Back!</h2>
+              <p class="text-sm text-slate-500 mt-1">Login to your account to continue</p>
+            </div>
+
+            <!-- Role Selector Pill Switch (Student / Teacher) -->
+            <div class="bg-slate-100 p-1.5 rounded-2xl flex items-center mb-6 border border-slate-200">
+              <button id="login-role-student-btn" onclick="setLoginRole('student')" class="flex-1 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-sm flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-user-graduate"></i>
+                <span>Student</span>
+              </button>
+              <button id="login-role-teacher-btn" onclick="setLoginRole('teacher')" class="flex-1 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span>Teacher</span>
+              </button>
+            </div>
+
+            <!-- Form -->
+            <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Name</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <i class="fa-regular fa-user text-sm"></i>
+                  </span>
+                  <input type="text" id="login-name" required value="John" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition" placeholder="Enter your full name">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <i class="fa-regular fa-envelope text-sm"></i>
+                  </span>
+                  <input type="email" id="login-email" required value="john123@gmail.com" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition" placeholder="name@domain.com">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <i class="fa-solid fa-lock text-sm"></i>
+                  </span>
+                  <input type="password" id="login-password" required value="password123" class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition" placeholder="••••••••">
+                  <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600">
+                    <i id="password-toggle-icon" class="fa-regular fa-eye text-sm"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-xs pt-1">
+                <label class="flex items-center space-x-2 text-slate-600 cursor-pointer">
+                  <input type="checkbox" checked class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5">
+                  <span>Remember me</span>
+                </label>
+                <a href="javascript:void(0)" onclick="showToast('Demo notice: You can use any password or click Quick Demo buttons below!', 'info')" class="text-indigo-600 font-semibold hover:underline">Forgot password?</a>
+              </div>
+
+              <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
+                <i class="fa-solid fa-arrow-right-to-bracket mr-2"></i> Login to Portal
+              </button>
+            </form>
+
+            <!-- Quick Demo One-Click Fillers -->
+            <div class="mt-6 pt-5 border-t border-slate-100">
+              <p class="text-xs text-center text-slate-400 font-medium mb-3">⚡ Quick Demo One-Click Access for Presentation:</p>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="quickFillAndLogin('student')" class="py-2 px-3 text-xs font-semibold rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 transition flex items-center justify-center space-x-1.5">
+                  <i class="fa-solid fa-user-graduate"></i>
+                  <span>Enter as Student (John)</span>
+                </button>
+                <button type="button" onclick="quickFillAndLogin('teacher')" class="py-2 px-3 text-xs font-semibold rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200/80 transition flex items-center justify-center space-x-1.5">
+                  <i class="fa-solid fa-chalkboard-user"></i>
+                  <span>Enter as Teacher</span>
+                </button>
+              </div>
+            </div>
+
+            <p class="text-center text-xs text-slate-400 mt-6">
+              Don't have an account? <span class="text-slate-600 font-semibold">Contact your administrator</span>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ##########################################
+         VIEW 2: STUDENT DASHBOARD (Home Page)
+         ########################################## -->
+    <section id="view-student-dashboard" class="app-view hidden flex-1 flex flex-col lg:flex-row">
+      <!-- Left Sidebar -->
+      <aside class="w-full lg:w-64 bg-indigo-950 text-slate-300 p-5 flex flex-col justify-between border-r border-indigo-900 shrink-0">
+        <div>
+          <!-- Nav links -->
+          <div class="space-y-1">
+            <button onclick="navigateTo('view-student-dashboard')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white shadow-md">
+              <i class="fa-solid fa-table-columns text-base w-5"></i>
+              <span>Dashboard</span>
+            </button>
+            <button onclick="showToast('Training Module: Interactive practice flashcards & tutorials loaded.', 'info')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-dumbbell text-base w-5"></i>
+              <span>Training</span>
+            </button>
+            <button onclick="navigateTo('view-history-profile')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-file-signature text-base w-5"></i>
+              <span>Exams</span>
+            </button>
+            <button onclick="showToast('Lessons Module: Lecture notes, formula sheets and syllabi available.', 'info')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-book-open text-base w-5"></i>
+              <span>Lessons</span>
+            </button>
+            <button onclick="navigateTo('view-history-profile')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-chart-line text-base w-5"></i>
+              <span>My Process</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Sidebar Settings & Logout -->
+        <div class="pt-6 border-t border-indigo-900 space-y-1">
+          <button onclick="alert('Settings configured for ExamNova Portal')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+            <i class="fa-solid fa-gear text-base w-5"></i>
+            <span>Settings</span>
+          </button>
+          <button onclick="openProfileModal()" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+            <i class="fa-regular fa-user text-base w-5"></i>
+            <span>Profile Settings</span>
+          </button>
+          <button onclick="handleLogout()" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-300 hover:text-rose-200 hover:bg-rose-900/30 transition">
+            <i class="fa-solid fa-arrow-right-from-bracket text-base w-5"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Student Content Area -->
+      <div class="flex-1 p-6 sm:p-8 overflow-y-auto">
+        <!-- Top Greeting -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">
+              Good Morning, <span id="student-greeting-name">John</span>! 👋
+            </h1>
+            <p class="text-sm text-slate-500 mt-0.5">Keep going! You're doing great!</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button onclick="navigateTo('view-history-profile')" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-xs sm:text-sm shadow-sm transition flex items-center space-x-2">
+              <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i>
+              <span>View Exam History</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Top Grid: Exam Progress Doughnut + Upcoming Test Card -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
+          
+          <!-- Exam Progress Card (7 cols) -->
+          <div class="md:col-span-7 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-base font-bold text-slate-900">Exam Progress</h3>
+              <span class="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2.5 py-1 rounded-full">Overall: 60%</span>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-around py-3 gap-6">
+              <!-- Doughnut Chart Container -->
+              <div class="relative w-36 h-36 flex items-center justify-center">
+                <canvas id="studentProgressChart"></canvas>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span class="text-2xl font-extrabold text-slate-900 font-heading">60%</span>
+                  <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Done</span>
+                </div>
+              </div>
+
+              <!-- Legend -->
+              <div class="space-y-3 w-full sm:w-auto">
+                <div class="flex items-center justify-between sm:justify-start space-x-4">
+                  <div class="flex items-center space-x-2.5">
+                    <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
+                    <span class="text-xs text-slate-600 font-medium">Completed</span>
+                  </div>
+                  <span class="text-xs font-bold text-slate-800">3</span>
+                </div>
+                <div class="flex items-center justify-between sm:justify-start space-x-4">
+                  <div class="flex items-center space-x-2.5">
+                    <span class="w-3 h-3 rounded-full bg-sky-400"></span>
+                    <span class="text-xs text-slate-600 font-medium">In Progress</span>
+                  </div>
+                  <span class="text-xs font-bold text-slate-800">1</span>
+                </div>
+                <div class="flex items-center justify-between sm:justify-start space-x-4">
+                  <div class="flex items-center space-x-2.5">
+                    <span class="w-3 h-3 rounded-full bg-slate-300"></span>
+                    <span class="text-xs text-slate-600 font-medium">Not Started</span>
+                  </div>
+                  <span class="text-xs font-bold text-slate-800">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Test Card (5 cols) -->
+          <div class="md:col-span-5 bg-gradient-to-br from-indigo-900 to-indigo-950 text-white rounded-2xl p-6 shadow-sm flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs uppercase tracking-wider font-bold text-indigo-300">Upcoming Test</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">Active</span>
+              </div>
+              <h3 class="text-xl font-bold font-heading text-white mt-3">Mathematics Quiz</h3>
+              <p class="text-xs text-indigo-200 mt-1 flex items-center">
+                <i class="fa-regular fa-clock mr-1.5 text-indigo-400"></i>
+                Tomorrow • 10:00 AM (15 Minutes)
+              </p>
+            </div>
+
+            <div class="pt-6">
+              <button onclick="launchExamById('exam_math')" class="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition flex items-center justify-center space-x-2">
+                <span>View Details & Start Test</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Middle Metric Stats Row (3 Cards) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+          
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0">
+              <i class="fa-regular fa-folder-open"></i>
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Tests</p>
+              <h4 id="stat-total-tests" class="text-2xl font-extrabold text-slate-900 font-heading">5</h4>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+              <i class="fa-regular fa-circle-check"></i>
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Completed</p>
+              <h4 id="stat-completed-tests" class="text-2xl font-extrabold text-slate-900 font-heading">3</h4>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl shrink-0">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Average Score</p>
+              <h4 id="stat-avg-score" class="text-2xl font-extrabold text-slate-900 font-heading">78%</h4>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Section: Available Tests Grid -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-slate-900 font-heading">Available Tests</h3>
+            <button onclick="navigateTo('view-history-profile')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition">View All Tests →</button>
+          </div>
+
+          <!-- Dynamic Container for Available Tests -->
+          <div id="available-tests-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Will be rendered via JS renderAvailableTests() -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ##########################################
+         VIEW 3: TEACHER DASHBOARD
+         ########################################## -->
+    <section id="view-teacher-dashboard" class="app-view hidden flex-1 flex flex-col lg:flex-row">
+      <!-- Left Sidebar for Teacher -->
+      <aside class="w-full lg:w-64 bg-indigo-950 text-slate-300 p-5 flex flex-col justify-between border-r border-indigo-900 shrink-0">
+        <div>
+          <div class="space-y-1">
+            <button onclick="navigateTo('view-teacher-dashboard')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white shadow-md">
+              <i class="fa-solid fa-table-columns text-base w-5"></i>
+              <span>Dashboard</span>
+            </button>
+            <button onclick="openCreateExamModal()" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-plus-circle text-base w-5"></i>
+              <span>Create / Add Exam</span>
+            </button>
+            <button onclick="scrollToTeacherSubmissions()" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-user-check text-base w-5"></i>
+              <span>Evaluate Results</span>
+            </button>
+            <button onclick="alert('Session Schedules: Manage test windows and proctoring settings.')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-regular fa-calendar-check text-base w-5"></i>
+              <span>Session Schedules</span>
+            </button>
+            <button onclick="alert('Student Directory: 48 registered students in Class 10 A & B.')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-users text-base w-5"></i>
+              <span>Students (48)</span>
+            </button>
+            <button onclick="alert('Detailed Analytics & Downloadable PDF Reports.')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-chart-column text-base w-5"></i>
+              <span>Reports</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-indigo-900 space-y-1">
+          <button onclick="alert('System settings')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+            <i class="fa-solid fa-gear text-base w-5"></i>
+            <span>Settings</span>
+          </button>
+          <button onclick="openProfileModal()" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+            <i class="fa-regular fa-user text-base w-5"></i>
+            <span>Profile Settings</span>
+          </button>
+          <button onclick="handleLogout()" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-300 hover:text-rose-200 hover:bg-rose-900/30 transition">
+            <i class="fa-solid fa-arrow-right-from-bracket text-base w-5"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Teacher Content Area -->
+      <div class="flex-1 p-6 sm:p-8 overflow-y-auto">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">Teacher Dashboard</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Manage exams, track student progress, and evaluate quiz results.</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button onclick="openCreateExamModal()" class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center space-x-2">
+              <i class="fa-solid fa-plus"></i>
+              <span>Add New Exam / Questions</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Teacher Metric Cards (4 cards) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-8">
+          
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl shrink-0">
+              <i class="fa-regular fa-file-lines"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Exams</p>
+              <h4 id="teacher-stat-exams" class="text-2xl font-extrabold text-slate-900 font-heading">12</h4>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0">
+              <i class="fa-solid fa-user-group"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Students</p>
+              <h4 class="text-2xl font-extrabold text-slate-900 font-heading">48</h4>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Average Score</p>
+              <h4 class="text-2xl font-extrabold text-slate-900 font-heading">76%</h4>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0">
+              <i class="fa-solid fa-cubes"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Modules</p>
+              <h4 class="text-2xl font-extrabold text-slate-900 font-heading">6</h4>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Middle Row: Performance Overview Bar Chart + Recent Activities -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+          
+          <!-- Performance Overview Bar Chart (7 cols) -->
+          <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-base font-bold text-slate-900 font-heading">Performance Overview</h3>
+                <p class="text-xs text-slate-400">Class Average Scores by Subject</p>
+              </div>
+              <span class="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2.5 py-1 rounded-full">All Classes</span>
+            </div>
+            <div class="h-64">
+              <canvas id="teacherPerformanceChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Recent Activities (5 cols) -->
+          <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold text-slate-900 font-heading">Recent Activities</h3>
+              <span class="text-xs text-slate-400">Live stream</span>
+            </div>
+            
+            <div id="teacher-activities-list" class="space-y-3.5">
+              <!-- Dynamically populated -->
+            </div>
+
+            <div class="pt-4 mt-2 border-t border-slate-100 text-center">
+              <button onclick="alert('Viewing comprehensive audit logs')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition">View Complete Activity Log →</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Teacher Quick Actions Bar -->
+        <div class="bg-gradient-to-r from-indigo-900 to-purple-900 rounded-2xl p-6 text-white mb-8 shadow-sm">
+          <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 class="text-lg font-bold font-heading">Quick Actions</h3>
+              <p class="text-xs text-indigo-200">Create new assessments, generate automated questions, or plan exams.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <button onclick="openAIGeneratorModal()" class="px-4 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold rounded-xl text-xs sm:text-sm shadow transition flex items-center space-x-2">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Generate Exam with AI</span>
+              </button>
+              <button onclick="openCreateExamModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm shadow transition flex items-center space-x-2">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>Create Exam</span>
+              </button>
+              <button onclick="openScheduleModal()" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs sm:text-sm border border-white/20 shadow transition flex items-center space-x-2">
+                <i class="fa-regular fa-calendar-plus"></i>
+                <span>Schedule Exam</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Results Evaluation Table (Teacher reviews student submissions!) -->
+        <div id="teacher-submissions-section" class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
+          <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 font-heading">Evaluate Student Results</h3>
+              <p class="text-xs text-slate-500">Review student performance, examine answer sheets, and publish final marks.</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs text-slate-400">Total Submissions:</span>
+              <span id="teacher-submissions-count" class="text-xs font-bold bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full">5</span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[11px] font-bold border-b border-slate-100">
+                <tr>
+                  <th class="py-3 px-4">Student</th>
+                  <th class="py-3 px-4">Class</th>
+                  <th class="py-3 px-4">Exam Title</th>
+                  <th class="py-3 px-4">Subject</th>
+                  <th class="py-3 px-4">Score</th>
+                  <th class="py-3 px-4">Percentage</th>
+                  <th class="py-3 px-4">Submitted</th>
+                  <th class="py-3 px-4 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="teacher-submissions-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Bottom: Upcoming Scheduled Events Table -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="text-base font-bold text-slate-900 font-heading">Upcoming Examination Events</h3>
+            <span class="text-xs text-indigo-600 font-semibold cursor-pointer" onclick="openScheduleModal()">+ Schedule New</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[11px] font-bold border-b border-slate-100">
+                <tr>
+                  <th class="py-3 px-4">Exam Name</th>
+                  <th class="py-3 px-4">Subject</th>
+                  <th class="py-3 px-4">Date & Time</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Settings</th>
+                </tr>
+              </thead>
+              <tbody id="teacher-events-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ##########################################
+         VIEW 4: EXAM ATTEMPT PAGE (Questions + Timer)
+         ########################################## -->
+    <section id="view-exam-attempt" class="app-view hidden flex-1 flex flex-col bg-slate-100">
+      
+      <!-- Exam Page Top Bar -->
+      <div class="bg-white border-b border-slate-200 px-6 py-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center space-x-4">
+          <button onclick="confirmExitExam()" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-xs font-semibold flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Back to Dashboard</span>
+          </button>
+          
+          <div class="border-l border-slate-200 pl-4">
+            <h2 id="exam-attempt-title" class="text-lg sm:text-xl font-extrabold text-slate-900 font-heading">Mathematics Quiz</h2>
+            <div class="flex items-center space-x-2 text-xs text-slate-500 mt-0.5">
+              <span id="exam-attempt-subject" class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-semibold">Mathematics</span>
+              <span>•</span>
+              <span id="exam-attempt-qcount">10 Questions</span>
+              <span>•</span>
+              <span id="exam-attempt-totalmarks">20 Marks</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Countdown Timer -->
+        <div class="flex items-center space-x-4">
+          <div class="bg-rose-50 border border-rose-200 rounded-2xl px-5 py-2.5 flex items-center space-x-3 text-rose-700 shadow-sm pulse-timer">
+            <i class="fa-regular fa-clock text-xl text-rose-600"></i>
+            <div>
+              <p class="text-[10px] uppercase tracking-wider font-bold text-rose-500">Remaining Time</p>
+              <div id="exam-timer-display" class="text-xl font-extrabold font-mono tracking-wider">00:14:59</div>
+            </div>
+          </div>
+
+          <button onclick="openSubmitModal()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center space-x-2">
+            <i class="fa-regular fa-circle-check"></i>
+            <span>Submit Exam</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Exam Main Content: Question Box + Palette -->
+      <div class="flex-1 p-4 sm:p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Question Panel (8 cols) -->
+        <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <!-- Question Top Status -->
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+              <div class="flex items-center space-x-2">
+                <span id="question-number-badge" class="px-3 py-1 bg-indigo-100 text-indigo-700 font-bold rounded-lg text-xs">Question 1 of 10</span>
+                <span id="question-topic-badge" class="px-2.5 py-1 bg-slate-100 text-slate-600 font-medium rounded-lg text-xs">Algebra</span>
+              </div>
+              <span id="question-marks-badge" class="text-xs font-semibold text-slate-500">+2 Marks</span>
+            </div>
+
+            <!-- Question Statement -->
+            <div class="mb-8">
+              <h3 id="current-question-text" class="text-lg sm:text-xl font-bold text-slate-900 leading-relaxed font-heading">
+                What is the value of 2 + 3 × 4?
+              </h3>
+            </div>
+
+            <!-- Options List (A, B, C, D) -->
+            <div id="current-options-container" class="space-y-3.5">
+              <!-- Dynamically populated via renderCurrentQuestion() -->
+            </div>
+          </div>
+
+          <!-- Question Footer Navigation Buttons -->
+          <div class="pt-8 border-t border-slate-100 mt-8 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-2">
+              <button onclick="goToFirstQuestion()" class="px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
+                First
+              </button>
+              <button onclick="goToPreviousQuestion()" class="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 transition flex items-center space-x-1">
+                <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                <span>Back</span>
+              </button>
+            </div>
+
+            <div class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg">
+              <span id="nav-counter-display">1 / 10</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <button onclick="goToNextQuestion()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center space-x-1">
+                <span>Next</span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+              </button>
+              <button onclick="goToLastQuestion()" class="px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
+                Last
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Question Palette (4 cols) -->
+        <div class="lg:col-span-4 space-y-6">
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider font-heading">Question Palette</h4>
+              <span class="text-xs text-slate-400">Jump to Question</span>
+            </div>
+
+            <!-- Numbered Palette Grid -->
+            <div id="question-palette-grid" class="grid grid-cols-5 gap-2.5 mb-6">
+              <!-- Dynamically populated buttons -->
+            </div>
+
+            <!-- Palette Legend -->
+            <div class="pt-4 border-t border-slate-100 space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="w-3.5 h-3.5 rounded bg-emerald-500"></span>
+                  <span class="text-slate-600">Answered</span>
+                </div>
+                <span id="count-answered" class="font-bold text-slate-800">0</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="w-3.5 h-3.5 rounded bg-indigo-600"></span>
+                  <span class="text-slate-600">Current</span>
+                </div>
+                <span class="font-bold text-slate-800">1</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="w-3.5 h-3.5 rounded bg-slate-200"></span>
+                  <span class="text-slate-600">Not Answered</span>
+                </div>
+                <span id="count-unanswered" class="font-bold text-slate-800">10</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="w-3.5 h-3.5 rounded bg-amber-500"></span>
+                  <span class="text-slate-600">Marked for Review</span>
+                </div>
+                <span id="count-marked" class="font-bold text-slate-800">0</span>
+              </div>
+            </div>
+
+            <!-- Palette Utility Actions -->
+            <div class="pt-5 border-t border-slate-100 space-y-2 mt-4">
+              <button onclick="jumpToFirstUnanswered()" class="w-full py-2 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1.5">
+                <i class="fa-regular fa-eye"></i>
+                <span>View Unanswered</span>
+              </button>
+              <button id="btn-toggle-review" onclick="toggleCurrentReview()" class="w-full py-2 px-3 border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1.5">
+                <i class="fa-regular fa-star"></i>
+                <span>Save for Revision</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Instruction Tip Box -->
+          <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 text-xs text-indigo-900">
+            <div class="flex items-start space-x-2.5">
+              <i class="fa-solid fa-circle-info text-indigo-600 text-sm mt-0.5"></i>
+              <p>Your answers are saved automatically when selected. You can revisit and change your answers any time before clicking "Submit Exam".</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ##########################################
+         VIEW 5: RESULTS PAGE
+         ########################################## -->
+    <section id="view-results" class="app-view hidden flex-1 flex flex-col p-6 sm:p-10 max-w-6xl mx-auto w-full">
+      <!-- Celebratory Banner -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-100 text-amber-600 text-3xl mb-3 shadow-md shadow-amber-500/10">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 font-heading">Test Completed!</h1>
+        <p class="text-sm sm:text-base text-slate-500 mt-1">Great job, <span id="results-student-name">John</span>! You have successfully submitted the test.</p>
+      </div>
+
+      <!-- Score Ring + Metrics Row -->
+      <div class="bg-white rounded-3xl border border-slate-100 p-6 sm:p-8 shadow-sm mb-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        
+        <!-- Score Circular Ring (4 cols) -->
+        <div class="md:col-span-4 flex flex-col items-center justify-center text-center border-b md:border-b-0 md:border-r border-slate-100 pb-6 md:pb-0">
+          <div class="relative w-44 h-44 flex items-center justify-center">
+            <canvas id="resultScoreRing"></canvas>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span id="results-score-percent" class="text-3xl font-extrabold text-slate-900 font-heading">85%</span>
+              <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Your Score</span>
+            </div>
+          </div>
+          <span id="results-pass-status" class="mt-4 px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+            Passed with Distinction
+          </span>
+        </div>
+
+        <!-- 4 Metric Cards (8 cols) -->
+        <div class="md:col-span-8 grid grid-cols-2 sm:grid-cols-2 gap-4">
+          <div class="bg-emerald-50/70 border border-emerald-100 p-4 rounded-2xl flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-lg shrink-0">
+              <i class="fa-solid fa-check"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-emerald-700 uppercase">Correct Answers</p>
+              <h4 id="results-correct-count" class="text-xl font-extrabold text-slate-900">8 / 10</h4>
+            </div>
+          </div>
+
+          <div class="bg-rose-50/70 border border-rose-100 p-4 rounded-2xl flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg shrink-0">
+              <i class="fa-solid fa-xmark"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-rose-700 uppercase">Wrong Answers</p>
+              <h4 id="results-wrong-count" class="text-xl font-extrabold text-slate-900">2 / 10</h4>
+            </div>
+          </div>
+
+          <div class="bg-indigo-50/70 border border-indigo-100 p-4 rounded-2xl flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg shrink-0">
+              <i class="fa-solid fa-award"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-indigo-700 uppercase">Total Marks</p>
+              <h4 id="results-total-marks" class="text-xl font-extrabold text-slate-900">17 / 20</h4>
+            </div>
+          </div>
+
+          <div class="bg-purple-50/70 border border-purple-100 p-4 rounded-2xl flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center text-lg shrink-0">
+              <i class="fa-regular fa-clock"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-purple-700 uppercase">Time Taken</p>
+              <h4 id="results-time-taken" class="text-xl font-extrabold text-slate-900">08:42</h4>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Topic-wise Performance + Recommended Next Tests -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+        
+        <!-- Topic-wise Performance Bars (7 cols) -->
+        <div class="md:col-span-7 bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 font-heading mb-4">Topic-wise Performance</h3>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-slate-700">Algebra</span>
+                <span class="text-indigo-600">90%</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5">
+                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 90%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-slate-700">Geometry</span>
+                <span class="text-teal-600">80%</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5">
+                <div class="bg-teal-500 h-2.5 rounded-full" style="width: 80%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-slate-700">Trigonometry</span>
+                <span class="text-blue-600">70%</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5">
+                <div class="bg-blue-500 h-2.5 rounded-full" style="width: 70%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-slate-700">Data Handling</span>
+                <span class="text-purple-600">60%</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5">
+                <div class="bg-purple-500 h-2.5 rounded-full" style="width: 60%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommended Next Actions (5 cols) -->
+        <div class="md:col-span-5 bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 font-heading mb-3">Recommended Next</h3>
+            <div class="space-y-3">
+              <div class="p-3 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between">
+                <div>
+                  <h5 class="text-xs font-bold text-slate-800">Geometry Practice Test</h5>
+                  <p class="text-[10px] text-slate-500">10 Questions • 15 Marks</p>
+                </div>
+                <button onclick="alert('Starting Geometry practice session')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition">
+                  Start Now
+                </button>
+              </div>
+
+              <div class="p-3 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between">
+                <div>
+                  <h5 class="text-xs font-bold text-slate-800">Algebra Flashcards</h5>
+                  <p class="text-[10px] text-slate-500">Quick Formula Revision</p>
+                </div>
+                <button onclick="alert('Opening Flashcards revision')" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold transition">
+                  Start Now
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center space-x-2 text-[11px] text-slate-500">
+            <i class="fa-regular fa-lightbulb text-amber-500 text-sm"></i>
+            <span>Improve your skills with personalized recommendations</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-slate-200">
+        <button onclick="openSolutionReviewModal()" class="px-6 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 font-bold rounded-xl text-xs sm:text-sm shadow-sm transition flex items-center space-x-2">
+          <i class="fa-solid fa-list-check text-indigo-600"></i>
+          <span>View Detailed Question Solutions</span>
+        </button>
+        <button onclick="quickStartDemoExam()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center space-x-2">
+          <i class="fa-solid fa-rotate-right"></i>
+          <span>Retake Test</span>
+        </button>
+        <button onclick="navigateTo('view-student-dashboard')" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs sm:text-sm shadow-sm transition flex items-center space-x-2">
+          <i class="fa-solid fa-house"></i>
+          <span>Back to Dashboard</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ##########################################
+         VIEW 6: EXAM HISTORY & PROFILE
+         ########################################## -->
+    <section id="view-history-profile" class="app-view hidden flex-1 flex flex-col lg:flex-row">
+      <!-- Left Navigation Sidebar -->
+      <aside class="w-full lg:w-64 bg-indigo-950 text-slate-300 p-5 flex flex-col justify-between border-r border-indigo-900 shrink-0">
+        <div>
+          <div class="space-y-1">
+            <button onclick="navigateTo('view-student-dashboard')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-table-columns text-base w-5"></i>
+              <span>Dashboard</span>
+            </button>
+            <button onclick="alert('Training module')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-dumbbell text-base w-5"></i>
+              <span>Training</span>
+            </button>
+            <button onclick="navigateTo('view-history-profile')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white shadow-md">
+              <i class="fa-solid fa-clock-rotate-left text-base w-5"></i>
+              <span>Exam History</span>
+            </button>
+            <button onclick="alert('Lessons module')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-book-open text-base w-5"></i>
+              <span>Lessons</span>
+            </button>
+            <button onclick="navigateTo('view-history-profile')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+              <i class="fa-solid fa-chart-line text-base w-5"></i>
+              <span>My Process</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-indigo-900 space-y-1">
+          <button onclick="alert('Settings')" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+            <i class="fa-solid fa-gear text-base w-5"></i>
+            <span>Settings</span>
+          </button>
+          <button onclick="openProfileModal()" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-indigo-900/50 transition">
+            <i class="fa-regular fa-user text-base w-5"></i>
+            <span>Profile Settings</span>
+          </button>
+          <button onclick="handleLogout()" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-300 hover:text-rose-200 hover:bg-rose-900/30 transition">
+            <i class="fa-solid fa-arrow-right-from-bracket text-base w-5"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main History & Profile Content Area -->
+      <div class="flex-1 p-6 sm:p-8 overflow-y-auto">
+        <!-- Sub Tabs (Exam History, Total Marks, Suggestions) -->
+        <div class="flex items-center space-x-2 border-b border-slate-200 pb-4 mb-6">
+          <button class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white shadow-sm">
+            Exam History
+          </button>
+          <button onclick="alert('Analytics: Aggregate score across 5 exams is 80.0%')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+            Total Marks
+          </button>
+          <button onclick="alert('Suggestion: Focus on Geometry trigonometry formulas for next week.')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+            Suggestions
+          </button>
+        </div>
+
+        <!-- History Table Card -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="text-base font-bold text-slate-900 font-heading">Completed Examinations Record</h3>
+            <span class="text-xs text-slate-400">Total Recorded: <span id="history-total-count" class="font-bold text-slate-700">5</span></span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[11px] font-bold border-b border-slate-100">
+                <tr>
+                  <th class="py-3 px-4">#</th>
+                  <th class="py-3 px-4">Test Name</th>
+                  <th class="py-3 px-4">Subject</th>
+                  <th class="py-3 px-4">Date</th>
+                  <th class="py-3 px-4">Score</th>
+                  <th class="py-3 px-4">Percentage</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="exam-history-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated via renderExamHistory() -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Bottom Row: My Profile Card + Next Suggested Test Card -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          
+          <!-- My Profile Card (6 cols) -->
+          <div class="md:col-span-6 bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-bold text-slate-900 font-heading uppercase tracking-wider">My Profile</h4>
+                <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-semibold">Active Student</span>
+              </div>
+
+              <div class="flex items-center space-x-4 mb-4">
+                <div id="profile-card-avatar" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-extrabold text-2xl flex items-center justify-center shadow-md">
+                  J
+                </div>
+                <div>
+                  <h3 id="profile-card-name" class="text-lg font-bold text-slate-900 font-heading">John</h3>
+                  <p id="profile-card-email" class="text-xs text-slate-500">john123@gmail.com</p>
+                  <p class="text-[11px] text-indigo-600 font-semibold mt-0.5">Class 10 A • Roll No: 24-CS-102</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs text-slate-400">Profile complete (100%)</span>
+              <button onclick="openProfileModal()" class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-xs transition">
+                <i class="fa-regular fa-pen-to-square mr-1.5"></i> Edit Profile
+              </button>
+            </div>
+          </div>
+
+          <!-- Next Suggested Test Card (6 cols) -->
+          <div class="md:col-span-6 bg-gradient-to-br from-indigo-900 to-indigo-950 text-white rounded-2xl p-6 shadow-sm flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs uppercase tracking-wider font-bold text-indigo-300">Next Suggested Test</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/30 text-indigo-200 font-medium">Recommended</span>
+              </div>
+              <h3 class="text-lg font-bold font-heading text-white mt-3">Mathematics Quiz</h3>
+              <p class="text-xs text-indigo-200 mt-1">10 Questions • 20 Marks • Apr 25, 10:00 AM</p>
+            </div>
+
+            <div class="pt-6">
+              <button onclick="launchExamById('exam_math')" class="w-full py-2.5 bg-white text-indigo-900 hover:bg-indigo-50 rounded-xl text-xs sm:text-sm font-bold shadow transition flex items-center justify-center space-x-2">
+                <span>View Test Details</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       MODALS
+       ========================================== -->
+
+  <!-- Modal 1: Teacher Create Exam / Add Questions -->
+  <div id="modal-create-exam" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 p-6 sm:p-8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div>
+          <h3 class="text-xl font-bold text-slate-900 font-heading">Create New Exam & Add Questions</h3>
+          <p class="text-xs text-slate-500">Build interactive quizzes for your students.</p>
+        </div>
+        <button onclick="closeModal('modal-create-exam')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form id="create-exam-form" onsubmit="handleCreateExamSubmit(event)" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Exam Title</label>
+            <input type="text" id="new-exam-title" required placeholder="e.g. Physics Mechanics Test" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Subject</label>
+            <select id="new-exam-subject" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600">
+              <option value="Mathematics">Mathematics</option>
+              <option value="Science">Science</option>
+              <option value="English">English</option>
+              <option value="Computer">Computer</option>
+              <option value="Social">Social</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Duration (Mins)</label>
+            <input type="number" id="new-exam-duration" required value="15" min="5" max="180" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Total Marks</label>
+            <input type="number" id="new-exam-marks" required value="20" min="5" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Passing Marks</label>
+            <input type="number" id="new-exam-passing" required value="10" min="2" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600">
+          </div>
+        </div>
+
+        <!-- Add Initial Question Section -->
+        <div class="pt-4 border-t border-slate-100">
+          <h4 class="text-sm font-bold text-slate-800 mb-3 flex items-center justify-between">
+            <span>Add First Question:</span>
+            <span class="text-xs text-indigo-600 font-normal">Multiple Choice Question (MCQ)</span>
+          </h4>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Question Text</label>
+              <textarea id="new-q-text" required rows="2" placeholder="e.g. What is the acceleration due to gravity on Earth?" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Option A</label>
+                <input type="text" id="new-opt-0" required placeholder="Option A" value="9.8 m/s²" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Option B</label>
+                <input type="text" id="new-opt-1" required placeholder="Option B" value="8.9 m/s²" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Option C</label>
+                <input type="text" id="new-opt-2" required placeholder="Option C" value="10.8 m/s²" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Option D</label>
+                <input type="text" id="new-opt-3" required placeholder="Option D" value="12 m/s²" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Correct Option</label>
+                <select id="new-correct-opt" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-emerald-700 bg-emerald-50">
+                  <option value="0">Option A is correct</option>
+                  <option value="1">Option B is correct</option>
+                  <option value="2">Option C is correct</option>
+                  <option value="3">Option D is correct</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Topic / Category</label>
+                <input type="text" id="new-q-topic" value="Physics" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Explanation / Solution Note</label>
+              <input type="text" id="new-q-expl" placeholder="Standard gravitational acceleration near Earth's surface is approximately 9.80665 m/s²." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-slate-100 flex items-center justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-create-exam')" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs sm:text-sm font-semibold hover:bg-slate-50 transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition">
+            Save & Publish Exam
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: AI Exam Generator Simulator -->
+  <div id="modal-ai-generator" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 p-6 sm:p-8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 font-heading">AI Quiz Generator</h3>
+            <p class="text-xs text-slate-500">Automatically generate MCQs with AI</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-ai-generator')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Topic or Subject</label>
+          <input type="text" id="ai-gen-topic" value="Artificial Intelligence & Machine Learning" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Difficulty</label>
+            <select id="ai-gen-diff" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+              <option>Beginner</option>
+              <option selected>Intermediate</option>
+              <option>Advanced</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Number of Questions</label>
+            <select id="ai-gen-count" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+              <option selected>5 Questions</option>
+              <option>10 Questions</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="ai-gen-loader" class="hidden py-4 text-center">
+          <i class="fa-solid fa-spinner fa-spin text-2xl text-indigo-600 mb-2"></i>
+          <p class="text-xs text-slate-600 font-medium">Generating questions, options, and explanations with ExamNova AI...</p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-ai-generator')" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold">Cancel</button>
+          <button type="button" onclick="simulateAIGeneration()" class="px-5 py-2 bg-gradient-to-r from-amber-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white rounded-xl text-xs font-bold shadow transition">
+            Generate & Add to Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Exam Submission Confirmation -->
+  <div id="modal-submit-confirm" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 p-6 sm:p-8 text-center">
+      <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl mx-auto mb-4">
+        <i class="fa-solid fa-flag-checkered"></i>
+      </div>
+      <h3 class="text-xl font-bold text-slate-900 font-heading">Submit Examination?</h3>
+      <p class="text-xs text-slate-500 mt-1 mb-6">Are you sure you want to finish and submit your exam? You won't be able to change your answers after submission.</p>
+
+      <div class="bg-slate-50 rounded-2xl p-4 mb-6 grid grid-cols-2 gap-3 text-left">
+        <div>
+          <span class="text-[11px] text-slate-400 uppercase font-semibold">Answered:</span>
+          <p id="confirm-modal-answered" class="text-base font-bold text-emerald-600">8 Questions</p>
+        </div>
+        <div>
+          <span class="text-[11px] text-slate-400 uppercase font-semibold">Unanswered:</span>
+          <p id="confirm-modal-unanswered" class="text-base font-bold text-rose-600">2 Questions</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center space-x-3">
+        <button onclick="closeModal('modal-submit-confirm')" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold hover:bg-slate-50 transition">
+          Resume Test
+        </button>
+        <button onclick="finalizeExamSubmission()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition">
+          Yes, Submit Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Detailed Solutions Review Modal -->
+  <div id="modal-solutions-review" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-slate-100 p-6 sm:p-8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div>
+          <h3 class="text-xl font-bold text-slate-900 font-heading">Question-by-Question Solution Review</h3>
+          <p class="text-xs text-slate-500">Examine correct answers and step-by-step solutions.</p>
+        </div>
+        <button onclick="closeModal('modal-solutions-review')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div id="solutions-list-container" class="space-y-6">
+        <!-- Dynamically rendered -->
+      </div>
+
+      <div class="pt-6 border-t border-slate-100 text-right">
+        <button onclick="closeModal('modal-solutions-review')" class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">
+          Close Review
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Teacher Inspect Student Submission Details -->
+  <div id="modal-teacher-inspect" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-100 p-6 sm:p-8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 font-heading">Student Examination Sheet</h3>
+          <p id="inspect-student-subtitle" class="text-xs text-slate-500">John Doe • Mathematics Quiz</p>
+        </div>
+        <button onclick="closeModal('modal-teacher-inspect')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-2xl text-center">
+          <div>
+            <span class="text-[10px] text-slate-400 font-semibold uppercase">Score</span>
+            <p id="inspect-score" class="text-base font-extrabold text-indigo-600">17 / 20</p>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-semibold uppercase">Percentage</span>
+            <p id="inspect-percentage" class="text-base font-extrabold text-emerald-600">85%</p>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-semibold uppercase">Status</span>
+            <p class="text-base font-extrabold text-slate-800">Evaluated</p>
+          </div>
+        </div>
+
+        <div class="border border-slate-100 rounded-2xl p-4 bg-slate-50/50">
+          <h5 class="text-xs font-bold text-slate-800 uppercase mb-2">Teacher Evaluation Remarks:</h5>
+          <textarea id="teacher-remarks-input" rows="3" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-600" placeholder="Excellent grasp of fundamentals. Keep up the good work!"></textarea>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <button onclick="printCertificate()" class="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50">
+            <i class="fa-solid fa-print mr-1"></i> Print Grade Slip
+          </button>
+          <button onclick="saveTeacherEvaluation()" class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">
+            Save Remarks
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6: Edit Profile Modal -->
+  <div id="modal-edit-profile" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 p-6 sm:p-8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <h3 class="text-lg font-bold text-slate-900 font-heading">Edit Profile Settings</h3>
+        <button onclick="closeModal('modal-edit-profile')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form id="edit-profile-form" onsubmit="handleEditProfileSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Full Name</label>
+          <input type="text" id="edit-profile-name" required value="John Doe" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Email Address</label>
+          <input type="email" id="edit-profile-email" required value="john123@gmail.com" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Role</label>
+          <input type="text" id="edit-profile-role" readonly value="Student" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-sm">
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-edit-profile')" class="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 7: Schedule Exam Modal -->
+  <div id="modal-schedule-exam" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 p-6 sm:p-8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 font-heading">Schedule Exam Session</h3>
+          <p class="text-xs text-slate-500">Plan exam windows and batch timings.</p>
+        </div>
+        <button onclick="closeModal('modal-schedule-exam')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form id="schedule-exam-form" onsubmit="handleScheduleExamSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Select Examination</label>
+          <select id="sched-exam-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600">
+            <option value="Mathematics Quiz">Mathematics Quiz (15 Mins)</option>
+            <option value="Science Test">Science Test (20 Mins)</option>
+            <option value="English Language">English Language (15 Mins)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Exam Date</label>
+            <input type="date" id="sched-exam-date" value="2026-10-15" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Start Time</label>
+            <input type="time" id="sched-exam-time" value="10:00" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Target Batch / Class</label>
+          <select id="sched-exam-batch" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600">
+            <option>Class 10 A</option>
+            <option>Class 10 B</option>
+            <option selected>All Batches (Class 10 A & B)</option>
+          </select>
+        </div>
+
+        <div class="p-3 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-shield-halved text-indigo-600 text-sm"></i>
+            <span class="text-xs text-indigo-900 font-medium">AI Proctoring & Anti-Cheat</span>
+          </div>
+          <input type="checkbox" checked class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+          <button type="button" onclick="closeModal('modal-schedule-exam')" class="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600">Cancel</button>
+          <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow transition">Schedule Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- Scripts -->
+<script>
+/**
+ * ExamNova Data Store & Initial Demo Content
+ */
+
+const DEFAULT_DATA = {
+  currentUser: {
+    id: 'user_1',
+    name: 'John',
+    fullName: 'John Doe',
+    email: 'john123@gmail.com',
+    role: 'student', // 'student' or 'teacher'
+    avatar: 'J',
+    class: 'Class 10 A',
+    rollNo: '24-CS-102'
+  },
+  
+  teacherUser: {
+    id: 'user_teacher',
+    name: 'Prof. Anderson',
+    fullName: 'Dr. Robert Anderson',
+    email: 'robert.anderson@examnova.edu',
+    role: 'teacher',
+    avatar: 'T',
+    department: 'Department of Computer Science & Mathematics'
+  },
+
+  exams: [
+    {
+      id: 'exam_math',
+      title: 'Mathematics Quiz',
+      subject: 'Mathematics',
+      description: 'Comprehensive test covering Algebra, Geometry, and Arithmetic.',
+      durationMinutes: 15,
+      totalMarks: 20,
+      passingMarks: 10,
+      topic: 'Math & Quantitative Logic',
+      questions: [
+        {
+          id: 1,
+          question: 'What is the value of 2 + 3 × 4?',
+          options: ['10', '14', '16', '20'],
+          correctIndex: 1,
+          marks: 2,
+          topic: 'Algebra',
+          explanation: 'According to BODMAS / PEMDAS order of operations, multiplication comes before addition: 3 × 4 = 12, and 2 + 12 = 14.'
+        },
+        {
+          id: 2,
+          question: 'What is the square root of 144?',
+          options: ['10', '12', '14', '16'],
+          correctIndex: 1,
+          marks: 2,
+          topic: 'Algebra',
+          explanation: '12 × 12 = 144. Therefore, the square root of 144 is 12.'
+        },
+        {
+          id: 3,
+          question: 'If a triangle has angles 90° and 45°, what is the third angle?',
+          options: ['35°', '45°', '55°', '90°'],
+          correctIndex: 1,
+          marks: 2,
+          topic: 'Geometry',
+          explanation: 'The sum of angles in a triangle is always 180°. 180° - 90° - 45° = 45°.'
+        },
+        {
+          id: 4,
+          question: 'What is the formula for the area of a circle with radius r?',
+          options: ['2πr', 'πr²', '4πr²', '½πr²'],
+          correctIndex: 1,
+          marks: 2,
+          topic: 'Geometry',
+          explanation: 'The area of a circle with radius r is given by A = πr².'
+        },
+        {
+          id: 5,
+          question: 'Solve for x in the equation: 5x - 7 = 18',
+          options: ['x = 3', 'x = 4', 'x = 5', 'x = 6'],
+          correctIndex: 2,
+          marks: 2,
+          topic: 'Algebra',
+          explanation: '5x = 18 + 7 => 5x = 25 => x = 5.'
+        },
+        {
+          id: 6,
+          question: 'What is sin(90°)?',
+          options: ['0', '0.5', '1', 'Undefined'],
+          correctIndex: 2,
+          marks: 2,
+          topic: 'Trigonometry',
+          explanation: 'The trigonometric sine of a 90 degree right angle is exactly 1.'
+        },
+        {
+          id: 7,
+          question: 'Find the mean of the numbers: 4, 8, 12, 16, 20',
+          options: ['10', '12', '14', '15'],
+          correctIndex: 1,
+          marks: 2,
+          topic: 'Data Handling',
+          explanation: 'Sum = 4 + 8 + 12 + 16 + 20 = 60. Number of items = 5. Mean = 60 / 5 = 12.'
+        },
+        {
+          id: 8,
+          question: 'What is 25% of 240?',
+          options: ['50', '60', '70', '80'],
+          correctIndex: 1,
+          marks: 2,
+          topic: 'Data Handling',
+          explanation: '25% = 1/4. 240 ÷ 4 = 60.'
+        },
+        {
+          id: 9,
+          question: 'In a right triangle with legs of length 3 and 4, what is the hypotenuse?',
+          options: ['5', '6', '7', '8'],
+          correctIndex: 0,
+          marks: 2,
+          topic: 'Geometry',
+          explanation: 'By the Pythagorean theorem: c² = 3² + 4² = 9 + 16 = 25. Thus c = 5.'
+        },
+        {
+          id: 10,
+          question: 'What is tan(45°)?',
+          options: ['0', '1', '√3', '1/√3'],
+          correctIndex: 1,
+          marks: 2,
+          topic: 'Trigonometry',
+          explanation: 'tan(45°) = sin(45°) / cos(45°) = 1.'
+        }
+      ]
+    },
+    {
+      id: 'exam_science',
+      title: 'Science Test',
+      subject: 'Science',
+      description: 'Physics fundamentals, basic chemistry, and cell biology concepts.',
+      durationMinutes: 20,
+      totalMarks: 30,
+      passingMarks: 15,
+      topic: 'Natural Sciences',
+      questions: [
+        {
+          id: 1,
+          question: 'What is the powerhouse of the cell?',
+          options: ['Nucleus', 'Mitochondria', 'Ribosome', 'Endoplasmic Reticulum'],
+          correctIndex: 1,
+          marks: 3,
+          topic: 'Biology',
+          explanation: 'Mitochondria produce cellular ATP energy through cellular respiration.'
+        },
+        {
+          id: 2,
+          question: 'What is the chemical formula for water?',
+          options: ['H2O', 'CO2', 'NaCl', 'O2'],
+          correctIndex: 0,
+          marks: 3,
+          topic: 'Chemistry',
+          explanation: 'Water is composed of two hydrogen atoms and one oxygen atom (H2O).'
+        },
+        {
+          id: 3,
+          question: 'What is the speed of light in vacuum approximately?',
+          options: ['300,000 km/s', '150,000 km/s', '1,000,000 km/s', '30,000 km/s'],
+          correctIndex: 0,
+          marks: 3,
+          topic: 'Physics',
+          explanation: 'Light travels at roughly 299,792 km/s in vacuum (approx. 3 × 10⁸ m/s).'
+        },
+        {
+          id: 4,
+          question: 'Which gas do plants absorb during photosynthesis?',
+          options: ['Oxygen', 'Carbon Dioxide', 'Nitrogen', 'Argon'],
+          correctIndex: 1,
+          marks: 3,
+          topic: 'Biology',
+          explanation: 'Plants use sunlight to convert carbon dioxide and water into glucose and oxygen.'
+        },
+        {
+          id: 5,
+          question: 'What is Newton’s Second Law of Motion?',
+          options: ['F = ma', 'E = mc²', 'V = IR', 'P = IV'],
+          correctIndex: 0,
+          marks: 3,
+          topic: 'Physics',
+          explanation: 'Force equals mass multiplied by acceleration (F = ma).'
+        }
+      ]
+    },
+    {
+      id: 'exam_english',
+      title: 'English Language',
+      subject: 'English',
+      description: 'Grammar mastery, sentence structure, and vocabulary quiz.',
+      durationMinutes: 15,
+      totalMarks: 20,
+      passingMarks: 10,
+      topic: 'Language & Grammar',
+      questions: [
+        {
+          id: 1,
+          question: 'Identify the synonym for "Benevolent":',
+          options: ['Malevolent', 'Kind & Generous', 'Harsh', 'Indifferent'],
+          correctIndex: 1,
+          marks: 2,
+          topic: 'Vocabulary',
+          explanation: 'Benevolent means well-meaning and kindly.'
+        },
+        {
+          id: 2,
+          question: 'Which of the following is a complex sentence?',
+          options: [
+            'She ran fast.',
+            'She was tired, so she went to sleep.',
+            'Although it was raining, we went for a hike.',
+            'The sun set and the moon rose.'
+          ],
+          correctIndex: 2,
+          marks: 2,
+          topic: 'Grammar',
+          explanation: 'A complex sentence contains an independent clause and at least one dependent clause (beginning with "Although").'
+        },
+        {
+          id: 3,
+          question: 'Choose the correct spelling:',
+          options: ['Accomodation', 'Accommodation', 'Acomodation', 'Accommadation'],
+          correctIndex: 1,
+          marks: 2,
+          topic: 'Vocabulary',
+          explanation: 'Accommodation has double "c" and double "m".'
+        }
+      ]
+    }
+  ],
+
+  examHistory: [
+    {
+      id: 'hist_1',
+      examId: 'exam_math',
+      testName: 'Mathematics Quiz',
+      subject: 'Math',
+      date: 'Apr 20, 2025',
+      score: 16,
+      totalMarks: 20,
+      percentage: 80,
+      status: 'Passed',
+      timeTaken: '11:45'
+    },
+    {
+      id: 'hist_2',
+      examId: 'exam_science',
+      testName: 'Science Test',
+      subject: 'Science',
+      date: 'Apr 18, 2025',
+      score: 18,
+      totalMarks: 20,
+      percentage: 90,
+      status: 'Passed',
+      timeTaken: '14:20'
+    },
+    {
+      id: 'hist_3',
+      examId: 'exam_english',
+      testName: 'English Language',
+      subject: 'English',
+      date: 'Apr 15, 2025',
+      score: 14,
+      totalMarks: 20,
+      percentage: 70,
+      status: 'Passed',
+      timeTaken: '09:15'
+    },
+    {
+      id: 'hist_4',
+      examId: 'exam_social',
+      testName: 'Social Studies',
+      subject: 'Social',
+      date: 'Apr 12, 2025',
+      score: 17,
+      totalMarks: 20,
+      percentage: 85,
+      status: 'Passed',
+      timeTaken: '12:05'
+    },
+    {
+      id: 'hist_5',
+      examId: 'exam_cs',
+      testName: 'Computer Basics',
+      subject: 'Computer',
+      date: 'Apr 10, 2025',
+      score: 15,
+      totalMarks: 20,
+      percentage: 75,
+      status: 'Passed',
+      timeTaken: '08:30'
+    }
+  ],
+
+  upcomingEvents: [
+    { examName: 'Mathematics Quiz', subject: 'Mathematics', dateTime: 'Tomorrow - 10:00 AM', status: 'Upcoming' },
+    { examName: 'Science Test', subject: 'Science', dateTime: 'Apr 26, 02:00 PM', status: 'Scheduled' },
+    { examName: 'English Language', subject: 'English', dateTime: 'Apr 27, 10:00 AM', status: 'Upcoming' }
+  ],
+
+  recentActivities: [
+    { text: 'John submitted Mathematics Quiz', time: '1 hour ago', type: 'submission' },
+    { text: 'New exam created: Science Test', time: '2 hours ago', type: 'created' },
+    { text: 'Sarah scored 85% in English Test', time: '2 hours ago', type: 'score' },
+    { text: 'Student joined: Class 10 A', time: '3 hours ago', type: 'student' }
+  ],
+
+  studentSubmissions: [
+    {
+      id: 'sub_1',
+      studentName: 'John Doe',
+      studentEmail: 'john123@gmail.com',
+      studentClass: 'Class 10 A',
+      examTitle: 'Mathematics Quiz',
+      subject: 'Mathematics',
+      score: 17,
+      totalMarks: 20,
+      percentage: 85,
+      submittedAt: 'Today, 10:42 AM',
+      status: 'Evaluated'
+    },
+    {
+      id: 'sub_2',
+      studentName: 'Sarah Jenkins',
+      studentEmail: 'sarah.j@example.com',
+      studentClass: 'Class 10 A',
+      examTitle: 'English Language',
+      subject: 'English',
+      score: 17,
+      totalMarks: 20,
+      percentage: 85,
+      submittedAt: 'Today, 09:15 AM',
+      status: 'Evaluated'
+    },
+    {
+      id: 'sub_3',
+      studentName: 'Alex Turner',
+      studentEmail: 'alex.t@example.com',
+      studentClass: 'Class 10 B',
+      examTitle: 'Science Test',
+      subject: 'Science',
+      score: 24,
+      totalMarks: 30,
+      percentage: 80,
+      submittedAt: 'Yesterday, 04:30 PM',
+      status: 'Evaluated'
+    },
+    {
+      id: 'sub_4',
+      studentName: 'Emily Watson',
+      studentEmail: 'emily.w@example.com',
+      studentClass: 'Class 10 A',
+      examTitle: 'Mathematics Quiz',
+      subject: 'Mathematics',
+      score: 19,
+      totalMarks: 20,
+      percentage: 95,
+      submittedAt: 'Yesterday, 02:10 PM',
+      status: 'Evaluated'
+    },
+    {
+      id: 'sub_5',
+      studentName: 'Michael Brown',
+      studentEmail: 'michael.b@example.com',
+      studentClass: 'Class 10 B',
+      examTitle: 'Science Test',
+      subject: 'Science',
+      score: 15,
+      totalMarks: 30,
+      percentage: 50,
+      submittedAt: 'Oct 09, 11:20 AM',
+      status: 'Evaluated'
+    }
+  ]
+};
+
+// Storage helper functions
+const STORAGE_KEY = 'examnova_store_v1';
+
+function getStore() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DATA));
+    return DEFAULT_DATA;
+  }
+  try {
+    return JSON.parse(saved);
+  } catch (e) {
+    console.error('Failed to parse store, resetting:', e);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DATA));
+    return DEFAULT_DATA;
+  }
+}
+
+function saveStore(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function resetDemoData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DATA));
+  window.location.reload();
+}
+
+
+/**
+ * ExamNova Core Application Logic
+ */
+
+let appState = {
+  currentView: 'view-login',
+  currentRole: 'student', // 'student' or 'teacher'
+  user: null,
+  activeExam: null,
+  currentQuestionIndex: 0,
+  userAnswers: {}, // { [questionId]: optionIndex }
+  markedForReview: {}, // { [questionId]: boolean }
+  timerInterval: null,
+  timeRemainingSeconds: 0,
+  timeElapsedSeconds: 0,
+  lastResultData: null,
+  charts: {
+    studentProgress: null,
+    teacherPerformance: null,
+    resultRing: null
+  }
+};
+
+// Initialize on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+  initApp();
+});
+
+function initApp() {
+  const store = getStore();
+  appState.user = store.currentUser;
+  updateTopBarUser();
+  renderAvailableTests();
+  renderExamHistory();
+  renderTeacherDashboardData();
+
+  // Start at Login view by default (matching slide 1)
+  navigateTo('view-login');
+}
+
+/* ==========================================
+   NAVIGATION & VIEW ROUTING
+   ========================================== */
+function navigateTo(viewId) {
+  // If leaving active exam with timer running, pause timer check
+  if (appState.currentView === 'view-exam-attempt' && viewId !== 'view-exam-attempt') {
+    clearInterval(appState.timerInterval);
+  }
+
+  // Hide all views
+  const views = document.querySelectorAll('.app-view');
+  views.forEach(v => v.classList.add('hidden'));
+
+  // Show target view
+  const target = document.getElementById(viewId);
+  if (target) {
+    target.classList.remove('hidden');
+    appState.currentView = viewId;
+  }
+
+  // Highlight active nav pill
+  updateNavPillHighlights(viewId);
+
+  // If navigating to student dashboard, render/refresh charts
+  if (viewId === 'view-student-dashboard') {
+    setTimeout(initStudentProgressChart, 100);
+    renderAvailableTests();
+  } else if (viewId === 'view-teacher-dashboard') {
+    setTimeout(initTeacherPerformanceChart, 100);
+    renderTeacherDashboardData();
+  } else if (viewId === 'view-history-profile') {
+    renderExamHistory();
+    updateProfileCards();
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateNavPillHighlights(viewId) {
+  const pills = document.querySelectorAll('.nav-pill');
+  pills.forEach(p => {
+    p.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+    p.classList.add('bg-indigo-950/60', 'text-slate-200');
+  });
+
+  const viewIndexMap = {
+    'view-login': 0,
+    'view-student-dashboard': 1,
+    'view-teacher-dashboard': 2,
+    'view-exam-attempt': 3,
+    'view-results': 4,
+    'view-history-profile': 5
+  };
+
+  const activeIdx = viewIndexMap[viewId];
+  if (activeIdx !== undefined && pills[activeIdx]) {
+    pills[activeIdx].classList.remove('bg-indigo-950/60', 'text-slate-200');
+    pills[activeIdx].classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+  }
+}
+
+function goToHome() {
+  if (appState.currentRole === 'teacher') {
+    navigateTo('view-teacher-dashboard');
+  } else {
+    navigateTo('view-student-dashboard');
+  }
+}
+
+function switchRoleAndNavigate(role, viewId) {
+  const store = getStore();
+  if (role === 'teacher') {
+    appState.currentRole = 'teacher';
+    appState.user = store.teacherUser;
+  } else {
+    appState.currentRole = 'student';
+    appState.user = store.currentUser;
+  }
+  updateTopBarUser();
+  navigateTo(viewId);
+  showToast(`Switched view to ${role === 'teacher' ? 'Teacher Dashboard' : 'Student Dashboard'}`, 'info');
+}
+
+function updateTopBarUser() {
+  const avatarEl = document.getElementById('topbar-avatar');
+  const nameEl = document.getElementById('topbar-username');
+  const roleEl = document.getElementById('topbar-role');
+
+  if (avatarEl && nameEl && roleEl && appState.user) {
+    avatarEl.textContent = appState.user.avatar || appState.user.name.charAt(0);
+    nameEl.textContent = appState.user.name;
+    roleEl.textContent = appState.user.role;
+  }
+
+  const studentGreetingName = document.getElementById('student-greeting-name');
+  if (studentGreetingName && appState.user) {
+    studentGreetingName.textContent = appState.user.name;
+  }
+}
+
+/* ==========================================
+   VIEW 1: AUTHENTICATION / LOGIN
+   ========================================== */
+function setLoginRole(role) {
+  const studentBtn = document.getElementById('login-role-student-btn');
+  const teacherBtn = document.getElementById('login-role-teacher-btn');
+  const nameInput = document.getElementById('login-name');
+  const emailInput = document.getElementById('login-email');
+
+  if (role === 'student') {
+    studentBtn.className = "flex-1 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-indigo-600 text-white shadow-sm flex items-center justify-center space-x-2";
+    teacherBtn.className = "flex-1 py-2 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-2";
+    nameInput.value = "John";
+    emailInput.value = "john123@gmail.com";
+  } else {
+    teacherBtn.className = "flex-1 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-purple-600 text-white shadow-sm flex items-center justify-center space-x-2";
+    studentBtn.className = "flex-1 py-2 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-2";
+    nameInput.value = "Prof. Anderson";
+    emailInput.value = "robert.anderson@examnova.edu";
+  }
+}
+
+function togglePasswordVisibility() {
+  const pwdInput = document.getElementById('login-password');
+  const icon = document.getElementById('password-toggle-icon');
+  if (pwdInput.type === 'password') {
+    pwdInput.type = 'text';
+    icon.classList.remove('fa-eye');
+    icon.classList.add('fa-eye-slash');
+  } else {
+    pwdInput.type = 'password';
+    icon.classList.remove('fa-eye-slash');
+    icon.classList.add('fa-eye');
+  }
+}
+
+function quickFillAndLogin(role) {
+  setLoginRole(role);
+  setTimeout(() => {
+    performLogin(role);
+  }, 150);
+}
+
+function handleLoginSubmit(event) {
+  event.preventDefault();
+  const studentBtn = document.getElementById('login-role-student-btn');
+  const isStudent = studentBtn.classList.contains('bg-indigo-600');
+  performLogin(isStudent ? 'student' : 'teacher');
+}
+
+function performLogin(role) {
+  const store = getStore();
+  const nameVal = document.getElementById('login-name').value;
+  const emailVal = document.getElementById('login-email').value;
+
+  if (role === 'teacher') {
+    appState.currentRole = 'teacher';
+    appState.user = {
+      ...store.teacherUser,
+      name: nameVal || store.teacherUser.name,
+      email: emailVal || store.teacherUser.email
+    };
+    updateTopBarUser();
+    navigateTo('view-teacher-dashboard');
+    showToast(`Welcome Professor ${appState.user.name}!`, 'success');
+  } else {
+    appState.currentRole = 'student';
+    appState.user = {
+      ...store.currentUser,
+      name: nameVal || store.currentUser.name,
+      email: emailVal || store.currentUser.email
+    };
+    updateTopBarUser();
+    navigateTo('view-student-dashboard');
+    showToast(`Welcome back, ${appState.user.name}!`, 'success');
+  }
+}
+
+function handleLogout() {
+  showToast('Logged out successfully', 'info');
+  navigateTo('view-login');
+}
+
+/* ==========================================
+   VIEW 2: STUDENT DASHBOARD
+   ========================================== */
+function initStudentProgressChart() {
+  const canvas = document.getElementById('studentProgressChart');
+  if (!canvas) return;
+
+  if (appState.charts.studentProgress) {
+    appState.charts.studentProgress.destroy();
+  }
+
+  const ctx = canvas.getContext('2d');
+  appState.charts.studentProgress = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Completed', 'In Progress', 'Not Started'],
+      datasets: [{
+        data: [3, 1, 1],
+        backgroundColor: ['#4F46E5', '#38BDF8', '#E2E8F0'],
+        borderWidth: 0,
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '76%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return ` ${context.label}: ${context.raw} tests`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderAvailableTests() {
+  const store = getStore();
+  const grid = document.getElementById('available-tests-grid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+
+  store.exams.forEach(exam => {
+    const qCount = exam.questions.length;
+    let iconClass = 'fa-calculator';
+    let gradientBg = 'from-indigo-50 to-blue-50';
+    let iconColor = 'text-indigo-600 bg-indigo-100';
+
+    if (exam.subject.toLowerCase().includes('science')) {
+      iconClass = 'fa-flask-vial';
+      iconColor = 'text-emerald-600 bg-emerald-100';
+    } else if (exam.subject.toLowerCase().includes('english')) {
+      iconClass = 'fa-book-open';
+      iconColor = 'text-purple-600 bg-purple-100';
+    } else if (exam.subject.toLowerCase().includes('computer') || exam.subject.toLowerCase().includes('intelligence')) {
+      iconClass = 'fa-microchip';
+      iconColor = 'text-blue-600 bg-blue-100';
+    }
+
+    const card = document.createElement('div');
+    card.className = "bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between";
+    card.innerHTML = `
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-xl ${iconColor} flex items-center justify-center text-xl">
+            <i class="fa-solid ${iconClass}"></i>
+          </div>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+            ${exam.durationMinutes} Mins
+          </span>
+        </div>
+
+        <h4 class="text-base font-bold text-slate-900 font-heading mb-1">${exam.title}</h4>
+        <p class="text-xs text-slate-500 mb-4">${exam.description || 'Test covering key fundamental concepts.'}</p>
+        
+        <div class="flex items-center space-x-3 text-xs text-slate-600 font-medium mb-6">
+          <span class="flex items-center"><i class="fa-regular fa-circle-question mr-1 text-slate-400"></i> ${qCount} Questions</span>
+          <span>•</span>
+          <span class="flex items-center"><i class="fa-regular fa-star mr-1 text-amber-500"></i> ${exam.totalMarks} Marks</span>
+        </div>
+      </div>
+
+      <button onclick="launchExamById('${exam.id}')" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center space-x-2">
+        <span>Start Test</span>
+        <i class="fa-solid fa-play text-xs"></i>
+      </button>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* ==========================================
+   VIEW 3: TEACHER DASHBOARD
+   ========================================== */
+function initTeacherPerformanceChart() {
+  const canvas = document.getElementById('teacherPerformanceChart');
+  if (!canvas) return;
+
+  if (appState.charts.teacherPerformance) {
+    appState.charts.teacherPerformance.destroy();
+  }
+
+  const ctx = canvas.getContext('2d');
+  appState.charts.teacherPerformance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Math', 'Science', 'English', 'Social', 'Computer'],
+      datasets: [{
+        label: 'Average Score (%)',
+        data: [82, 74, 88, 65, 90],
+        backgroundColor: [
+          '#6366F1',
+          '#38BDF8',
+          '#818CF8',
+          '#A855F7',
+          '#4F46E5'
+        ],
+        borderRadius: 8,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: { color: '#F1F5F9' },
+          ticks: { callback: v => v + '%' }
+        },
+        x: {
+          grid: { display: false }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: context => ` Class Average: ${context.raw}%`
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderTeacherDashboardData() {
+  const store = getStore();
+
+  // Stats
+  const examsCountEl = document.getElementById('teacher-stat-exams');
+  if (examsCountEl) examsCountEl.textContent = store.exams.length;
+
+  // Activities
+  const actList = document.getElementById('teacher-activities-list');
+  if (actList) {
+    actList.innerHTML = '';
+    store.recentActivities.forEach(item => {
+      let icon = 'fa-check text-emerald-500 bg-emerald-50';
+      if (item.type === 'created') icon = 'fa-plus text-indigo-500 bg-indigo-50';
+      if (item.type === 'score') icon = 'fa-trophy text-amber-500 bg-amber-50';
+      if (item.type === 'student') icon = 'fa-user-plus text-blue-500 bg-blue-50';
+
+      const div = document.createElement('div');
+      div.className = "flex items-start space-x-3";
+      div.innerHTML = `
+        <div class="w-8 h-8 rounded-full ${icon} flex items-center justify-center text-xs shrink-0 mt-0.5">
+          <i class="fa-solid ${icon.split(' ')[0]}"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-semibold text-slate-800 truncate">${item.text}</p>
+          <p class="text-[10px] text-slate-400">${item.time}</p>
+        </div>
+      `;
+      actList.appendChild(div);
+    });
+  }
+
+  // Upcoming events table
+  const eventsTbody = document.getElementById('teacher-events-tbody');
+  if (eventsTbody) {
+    eventsTbody.innerHTML = '';
+    store.upcomingEvents.forEach(evt => {
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-slate-50/50 transition";
+      const statusBadge = evt.status === 'Upcoming' 
+        ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Upcoming</span>`
+        : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">Scheduled</span>`;
+
+      tr.innerHTML = `
+        <td class="py-3 px-4 font-semibold text-slate-900">${evt.examName}</td>
+        <td class="py-3 px-4 text-slate-600">${evt.subject}</td>
+        <td class="py-3 px-4 text-slate-500">${evt.dateTime}</td>
+        <td class="py-3 px-4">${statusBadge}</td>
+        <td class="py-3 px-4 text-right">
+          <button onclick="alert('Exam settings for ${evt.examName}')" class="text-slate-400 hover:text-indigo-600 transition">
+            <i class="fa-solid fa-ellipsis"></i>
+          </button>
+        </td>
+      `;
+      eventsTbody.appendChild(tr);
+    });
+  }
+
+  // Submissions evaluation table
+  const subTbody = document.getElementById('teacher-submissions-tbody');
+  const subCount = document.getElementById('teacher-submissions-count');
+  if (subTbody && store.studentSubmissions) {
+    subTbody.innerHTML = '';
+    if (subCount) subCount.textContent = store.studentSubmissions.length;
+
+    store.studentSubmissions.forEach(sub => {
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-slate-50 transition";
+      tr.innerHTML = `
+        <td class="py-3 px-4 font-semibold text-slate-900">
+          <div>${sub.studentName}</div>
+          <div class="text-[10px] text-slate-400 font-normal">${sub.studentEmail}</div>
+        </td>
+        <td class="py-3 px-4 text-slate-600">${sub.studentClass || 'Class 10 A'}</td>
+        <td class="py-3 px-4 font-medium text-slate-800">${sub.examTitle}</td>
+        <td class="py-3 px-4 text-slate-600">${sub.subject}</td>
+        <td class="py-3 px-4 font-bold text-indigo-700">${sub.score} / ${sub.totalMarks}</td>
+        <td class="py-3 px-4">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sub.percentage >= 75 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+            ${sub.percentage}%
+          </span>
+        </td>
+        <td class="py-3 px-4 text-slate-400 text-xs">${sub.submittedAt}</td>
+        <td class="py-3 px-4 text-center">
+          <button onclick="openTeacherInspectModal('${sub.id}')" class="px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold transition">
+            <i class="fa-regular fa-eye mr-1"></i> Review
+          </button>
+        </td>
+      `;
+      subTbody.appendChild(tr);
+    });
+  }
+}
+
+function scrollToTeacherSubmissions() {
+  const section = document.getElementById('teacher-submissions-section');
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function openTeacherInspectModal(submissionId) {
+  const store = getStore();
+  const sub = store.studentSubmissions.find(s => s.id === submissionId);
+  if (!sub) return;
+
+  document.getElementById('inspect-student-subtitle').textContent = `${sub.studentName} • ${sub.examTitle}`;
+  document.getElementById('inspect-score').textContent = `${sub.score} / ${sub.totalMarks}`;
+  document.getElementById('inspect-percentage').textContent = `${sub.percentage}%`;
+
+  openModal('modal-teacher-inspect');
+}
+
+function saveTeacherEvaluation() {
+  closeModal('modal-teacher-inspect');
+  showToast('Evaluation remarks saved and grade slip dispatched!', 'success');
+}
+
+function printCertificate() {
+  window.print();
+}
+
+/* ==========================================
+   VIEW 4: EXAM ATTEMPT (Questions + Timer)
+   ========================================= */
+function launchExamById(examId) {
+  const store = getStore();
+  const exam = store.exams.find(e => e.id === examId) || store.exams[0];
+
+  appState.activeExam = exam;
+  appState.currentQuestionIndex = 0;
+  appState.userAnswers = {};
+  appState.markedForReview = {};
+  appState.timeElapsedSeconds = 0;
+  appState.timeRemainingSeconds = exam.durationMinutes * 60;
+
+  // Set titles
+  document.getElementById('exam-attempt-title').textContent = exam.title;
+  document.getElementById('exam-attempt-subject').textContent = exam.subject;
+  document.getElementById('exam-attempt-qcount').textContent = `${exam.questions.length} Questions`;
+  document.getElementById('exam-attempt-totalmarks').textContent = `${exam.totalMarks} Marks`;
+
+  // Start timer
+  startExamTimer();
+
+  // Render question and palette
+  renderCurrentQuestion();
+  renderQuestionPalette();
+
+  navigateTo('view-exam-attempt');
+}
+
+function quickStartDemoExam() {
+  launchExamById('exam_math');
+}
+
+function startExamTimer() {
+  clearInterval(appState.timerInterval);
+  updateTimerDisplay();
+
+  appState.timerInterval = setInterval(() => {
+    appState.timeRemainingSeconds--;
+    appState.timeElapsedSeconds++;
+    updateTimerDisplay();
+
+    if (appState.timeRemainingSeconds <= 0) {
+      clearInterval(appState.timerInterval);
+      showToast('Time is up! Submitting exam automatically...', 'warning');
+      finalizeExamSubmission();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const display = document.getElementById('exam-timer-display');
+  if (!display) return;
+
+  const totalSec = Math.max(0, appState.timeRemainingSeconds);
+  const hours = Math.floor(totalSec / 3600);
+  const minutes = Math.floor((totalSec % 3600) / 60);
+  const seconds = totalSec % 60;
+
+  const pad = n => String(n).padStart(2, '0');
+  display.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
+function renderCurrentQuestion() {
+  if (!appState.activeExam) return;
+
+  const questions = appState.activeExam.questions;
+  const currentQ = questions[appState.currentQuestionIndex];
+  const qNum = appState.currentQuestionIndex + 1;
+
+  // Update badges & counters
+  document.getElementById('question-number-badge').textContent = `Question ${qNum} of ${questions.length}`;
+  document.getElementById('question-topic-badge').textContent = currentQ.topic || 'General';
+  document.getElementById('question-marks-badge').textContent = `+${currentQ.marks || 2} Marks`;
+  document.getElementById('nav-counter-display').textContent = `${qNum} / ${questions.length}`;
+  document.getElementById('current-question-text').textContent = currentQ.question;
+
+  // Render options (A, B, C, D)
+  const optContainer = document.getElementById('current-options-container');
+  optContainer.innerHTML = '';
+
+  const labels = ['A', 'B', 'C', 'D', 'E'];
+  const selectedAnswer = appState.userAnswers[currentQ.id];
+
+  currentQ.options.forEach((optText, idx) => {
+    const isSelected = selectedAnswer === idx;
+    const optDiv = document.createElement('div');
+    optDiv.className = `quiz-option p-4 rounded-xl border ${isSelected ? 'selected' : 'border-slate-200 bg-white'} flex items-center space-x-3.5`;
+    optDiv.onclick = () => selectOptionForCurrentQuestion(idx);
+
+    optDiv.innerHTML = `
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'}">
+        ${labels[idx]}
+      </div>
+      <div class="text-sm font-medium ${isSelected ? 'text-indigo-900 font-semibold' : 'text-slate-800'}">
+        ${optText}
+      </div>
+    `;
+    optContainer.appendChild(optDiv);
+  });
+
+  // Review button state
+  const isMarked = !!appState.markedForReview[currentQ.id];
+  const revBtn = document.getElementById('btn-toggle-review');
+  if (revBtn) {
+    if (isMarked) {
+      revBtn.className = "w-full py-2 px-3 border border-amber-400 bg-amber-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1.5";
+      revBtn.innerHTML = `<i class="fa-solid fa-star"></i><span>Marked for Revision</span>`;
+    } else {
+      revBtn.className = "w-full py-2 px-3 border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1.5";
+      revBtn.innerHTML = `<i class="fa-regular fa-star"></i><span>Save for Revision</span>`;
+    }
+  }
+
+  renderQuestionPalette();
+}
+
+function selectOptionForCurrentQuestion(optIndex) {
+  if (!appState.activeExam) return;
+  const currentQ = appState.activeExam.questions[appState.currentQuestionIndex];
+  appState.userAnswers[currentQ.id] = optIndex;
+  renderCurrentQuestion();
+}
+
+function renderQuestionPalette() {
+  if (!appState.activeExam) return;
+
+  const grid = document.getElementById('question-palette-grid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+  const questions = appState.activeExam.questions;
+  let answeredCount = 0;
+  let markedCount = 0;
+
+  questions.forEach((q, idx) => {
+    const isAnswered = appState.userAnswers[q.id] !== undefined;
+    const isCurrent = idx === appState.currentQuestionIndex;
+    const isMarked = !!appState.markedForReview[q.id];
+
+    if (isAnswered) answeredCount++;
+    if (isMarked) markedCount++;
+
+    let styleClass = 'palette-unanswered';
+    if (isMarked) {
+      styleClass = 'palette-review';
+    } else if (isCurrent) {
+      styleClass = 'palette-current';
+    } else if (isAnswered) {
+      styleClass = 'palette-answered';
+    }
+
+    const btn = document.createElement('button');
+    btn.className = `palette-btn ${styleClass}`;
+    btn.textContent = idx + 1;
+    btn.onclick = () => jumpToQuestionIndex(idx);
+    grid.appendChild(btn);
+  });
+
+  const unansweredCount = questions.length - answeredCount;
+  document.getElementById('count-answered').textContent = answeredCount;
+  document.getElementById('count-unanswered').textContent = unansweredCount;
+  document.getElementById('count-marked').textContent = markedCount;
+}
+
+function jumpToQuestionIndex(idx) {
+  if (!appState.activeExam) return;
+  if (idx >= 0 && idx < appState.activeExam.questions.length) {
+    appState.currentQuestionIndex = idx;
+    renderCurrentQuestion();
+  }
+}
+
+function goToFirstQuestion() {
+  jumpToQuestionIndex(0);
+}
+
+function goToLastQuestion() {
+  if (!appState.activeExam) return;
+  jumpToQuestionIndex(appState.activeExam.questions.length - 1);
+}
+
+function goToNextQuestion() {
+  if (!appState.activeExam) return;
+  if (appState.currentQuestionIndex < appState.activeExam.questions.length - 1) {
+    jumpToQuestionIndex(appState.currentQuestionIndex + 1);
+  } else {
+    showToast('You are on the last question!', 'info');
+  }
+}
+
+function goToPreviousQuestion() {
+  if (appState.currentQuestionIndex > 0) {
+    jumpToQuestionIndex(appState.currentQuestionIndex - 1);
+  }
+}
+
+function jumpToFirstUnanswered() {
+  if (!appState.activeExam) return;
+  const questions = appState.activeExam.questions;
+  const unansweredIdx = questions.findIndex(q => appState.userAnswers[q.id] === undefined);
+  if (unansweredIdx !== -1) {
+    jumpToQuestionIndex(unansweredIdx);
+  } else {
+    showToast('All questions have been answered!', 'success');
+  }
+}
+
+function toggleCurrentReview() {
+  if (!appState.activeExam) return;
+  const currentQ = appState.activeExam.questions[appState.currentQuestionIndex];
+  appState.markedForReview[currentQ.id] = !appState.markedForReview[currentQ.id];
+  renderCurrentQuestion();
+}
+
+function confirmExitExam() {
+  if (confirm('Are you sure you want to exit the exam? Your current progress will not be submitted.')) {
+    clearInterval(appState.timerInterval);
+    navigateTo('view-student-dashboard');
+  }
+}
+
+function openSubmitModal() {
+  if (!appState.activeExam) return;
+  const questions = appState.activeExam.questions;
+  let answered = 0;
+  questions.forEach(q => {
+    if (appState.userAnswers[q.id] !== undefined) answered++;
+  });
+  const unanswered = questions.length - answered;
+
+  document.getElementById('confirm-modal-answered').textContent = `${answered} Questions`;
+  document.getElementById('confirm-modal-unanswered').textContent = `${unanswered} Questions`;
+
+  openModal('modal-submit-confirm');
+}
+
+function finalizeExamSubmission() {
+  closeModal('modal-submit-confirm');
+  clearInterval(appState.timerInterval);
+
+  const exam = appState.activeExam;
+  const questions = exam.questions;
+  let correctCount = 0;
+  let scoreObtained = 0;
+
+  questions.forEach(q => {
+    const userChoice = appState.userAnswers[q.id];
+    if (userChoice !== undefined && userChoice === q.correctIndex) {
+      correctCount++;
+      scoreObtained += (q.marks || 2);
+    }
+  });
+
+  const totalQuestions = questions.length;
+  const wrongCount = totalQuestions - correctCount;
+  const percentage = Math.round((scoreObtained / exam.totalMarks) * 100);
+
+  const timeMins = Math.floor(appState.timeElapsedSeconds / 60);
+  const timeSecs = appState.timeElapsedSeconds % 60;
+  const pad = n => String(n).padStart(2, '0');
+  const timeTakenStr = `${pad(timeMins)}:${pad(timeSecs)}`;
+
+  const resultData = {
+    examId: exam.id,
+    examTitle: exam.title,
+    subject: exam.subject,
+    correctCount,
+    wrongCount,
+    totalQuestions,
+    scoreObtained,
+    totalMarks: exam.totalMarks,
+    percentage,
+    timeTaken: timeTakenStr,
+    timestamp: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  };
+
+  appState.lastResultData = resultData;
+
+  // Persist to store history & teacher submissions
+  const store = getStore();
+  store.examHistory.unshift({
+    id: 'hist_' + Date.now(),
+    examId: exam.id,
+    testName: exam.title,
+    subject: exam.subject,
+    date: resultData.timestamp,
+    score: scoreObtained,
+    totalMarks: exam.totalMarks,
+    percentage,
+    status: percentage >= 50 ? 'Passed' : 'Failed',
+    timeTaken: timeTakenStr
+  });
+
+  store.studentSubmissions.unshift({
+    id: 'sub_' + Date.now(),
+    studentName: appState.user.name || 'John Doe',
+    studentEmail: appState.user.email || 'john123@gmail.com',
+    studentClass: appState.user.class || 'Class 10 A',
+    examTitle: exam.title,
+    subject: exam.subject,
+    score: scoreObtained,
+    totalMarks: exam.totalMarks,
+    percentage,
+    submittedAt: 'Just now',
+    status: 'Evaluated'
+  });
+
+  saveStore(store);
+
+  renderResultsView(resultData);
+  navigateTo('view-results');
+}
+
+/* ==========================================
+   VIEW 5: RESULTS PAGE
+   ========================================== */
+function quickViewResults() {
+  if (!appState.lastResultData) {
+    // Default preview matching mockup
+    appState.lastResultData = {
+      examTitle: 'Mathematics Quiz',
+      subject: 'Mathematics',
+      correctCount: 8,
+      wrongCount: 2,
+      totalQuestions: 10,
+      scoreObtained: 17,
+      totalMarks: 20,
+      percentage: 85,
+      timeTaken: '08:42'
+    };
+  }
+  renderResultsView(appState.lastResultData);
+  navigateTo('view-results');
+}
+
+function renderResultsView(res) {
+  document.getElementById('results-student-name').textContent = appState.user.name || 'John';
+  document.getElementById('results-score-percent').textContent = `${res.percentage}%`;
+  document.getElementById('results-correct-count').textContent = `${res.correctCount} / ${res.totalQuestions}`;
+  document.getElementById('results-wrong-count').textContent = `${res.wrongCount} / ${res.totalQuestions}`;
+  document.getElementById('results-total-marks').textContent = `${res.scoreObtained} / ${res.totalMarks}`;
+  document.getElementById('results-time-taken').textContent = res.timeTaken;
+
+  const statusBadge = document.getElementById('results-pass-status');
+  if (res.percentage >= 75) {
+    statusBadge.textContent = 'Passed with Distinction';
+    statusBadge.className = 'mt-4 px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700';
+  } else if (res.percentage >= 50) {
+    statusBadge.textContent = 'Passed';
+    statusBadge.className = 'mt-4 px-3.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700';
+  } else {
+    statusBadge.textContent = 'Needs Improvement';
+    statusBadge.className = 'mt-4 px-3.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700';
+  }
+
+  // Trigger Confetti!
+  try {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  } catch (e) {
+    console.log('Confetti effect triggered');
+  }
+
+  // Init Score Ring Chart
+  setTimeout(() => {
+    initResultRingChart(res.percentage);
+  }, 100);
+}
+
+function initResultRingChart(percentage) {
+  const canvas = document.getElementById('resultScoreRing');
+  if (!canvas) return;
+
+  if (appState.charts.resultRing) {
+    appState.charts.resultRing.destroy();
+  }
+
+  const ctx = canvas.getContext('2d');
+  const remaining = 100 - percentage;
+  appState.charts.resultRing = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [percentage, remaining],
+        backgroundColor: ['#10B981', '#E2E8F0'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '80%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      }
+    }
+  });
+}
+
+function openSolutionReviewModal() {
+  const store = getStore();
+  const exam = appState.activeExam || store.exams[0];
+  const container = document.getElementById('solutions-list-container');
+  if (!container) return;
+
+  container.innerHTML = '';
+  const labels = ['A', 'B', 'C', 'D'];
+
+  exam.questions.forEach((q, idx) => {
+    const userChoice = appState.userAnswers[q.id];
+    const isCorrect = userChoice === q.correctIndex;
+    const isUnanswered = userChoice === undefined;
+
+    const div = document.createElement('div');
+    div.className = "p-4 rounded-2xl border border-slate-100 bg-slate-50/70";
+    
+    let statusPill = isCorrect 
+      ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700"><i class="fa-solid fa-check mr-1"></i> Correct</span>`
+      : isUnanswered
+        ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-200 text-slate-700"><i class="fa-solid fa-minus mr-1"></i> Not Attempted</span>`
+        : `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-700"><i class="fa-solid fa-xmark mr-1"></i> Incorrect</span>`;
+
+    let optionsHtml = q.options.map((opt, optIdx) => {
+      let optClass = 'bg-white border-slate-200 text-slate-700';
+      if (optIdx === q.correctIndex) {
+        optClass = 'bg-emerald-50 border-emerald-400 text-emerald-900 font-semibold';
+      } else if (optIdx === userChoice && !isCorrect) {
+        optClass = 'bg-rose-50 border-rose-400 text-rose-900';
+      }
+
+      return `
+        <div class="p-2.5 rounded-xl border ${optClass} text-xs flex items-center justify-between">
+          <span><strong class="mr-2">${labels[optIdx]}.</strong> ${opt}</span>
+          ${optIdx === q.correctIndex ? '<span class="text-[10px] font-bold text-emerald-700">Correct Answer</span>' : ''}
+          ${optIdx === userChoice && !isCorrect ? '<span class="text-[10px] font-bold text-rose-700">Your Answer</span>' : ''}
+        </div>
+      `;
+    }).join('');
+
+    div.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold text-slate-700">Question ${idx + 1} (${q.topic || 'General'})</span>
+        ${statusPill}
+      </div>
+      <p class="text-sm font-semibold text-slate-900 mb-3">${q.question}</p>
+      <div class="space-y-2 mb-3">
+        ${optionsHtml}
+      </div>
+      ${q.explanation ? `
+        <div class="p-2.5 rounded-xl bg-indigo-50/70 border border-indigo-100 text-xs text-indigo-900">
+          <strong><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Explanation:</strong> ${q.explanation}
+        </div>
+      ` : ''}
+    `;
+
+    container.appendChild(div);
+  });
+
+  openModal('modal-solutions-review');
+}
+
+/* ==========================================
+   VIEW 6: EXAM HISTORY & PROFILE
+   ========================================== */
+function renderExamHistory() {
+  const store = getStore();
+  const tbody = document.getElementById('exam-history-tbody');
+  const countEl = document.getElementById('history-total-count');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+  if (countEl) countEl.textContent = store.examHistory.length;
+
+  store.examHistory.forEach((item, idx) => {
+    const tr = document.createElement('tr');
+    tr.className = "hover:bg-slate-50 transition";
+    tr.innerHTML = `
+      <td class="py-3 px-4 font-bold text-slate-400">${idx + 1}</td>
+      <td class="py-3 px-4 font-semibold text-slate-900">${item.testName}</td>
+      <td class="py-3 px-4 text-slate-600">${item.subject}</td>
+      <td class="py-3 px-4 text-slate-500">${item.date}</td>
+      <td class="py-3 px-4 font-bold text-indigo-700">${item.score}/${item.totalMarks}</td>
+      <td class="py-3 px-4 font-bold ${item.percentage >= 75 ? 'text-emerald-600' : 'text-amber-600'}">${item.percentage}%</td>
+      <td class="py-3 px-4">
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${item.status === 'Passed' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+          ${item.status}
+        </span>
+      </td>
+      <td class="py-3 px-4 text-center">
+        <button onclick="previewHistoryDetail('${item.examId}')" class="px-3 py-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold transition">
+          View Result
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function previewHistoryDetail(examId) {
+  const store = getStore();
+  const exam = store.exams.find(e => e.id === examId) || store.exams[0];
+  appState.activeExam = exam;
+  openSolutionReviewModal();
+}
+
+function updateProfileCards() {
+  const store = getStore();
+  const user = store.currentUser;
+
+  const cardAvatar = document.getElementById('profile-card-avatar');
+  const cardName = document.getElementById('profile-card-name');
+  const cardEmail = document.getElementById('profile-card-email');
+
+  if (cardAvatar) cardAvatar.textContent = user.avatar || user.name.charAt(0);
+  if (cardName) cardName.textContent = user.fullName || user.name;
+  if (cardEmail) cardEmail.textContent = user.email;
+}
+
+function openProfileModal() {
+  const store = getStore();
+  const user = appState.currentRole === 'teacher' ? store.teacherUser : store.currentUser;
+
+  document.getElementById('edit-profile-name').value = user.fullName || user.name;
+  document.getElementById('edit-profile-email').value = user.email;
+  document.getElementById('edit-profile-role').value = user.role.toUpperCase();
+
+  openModal('modal-edit-profile');
+}
+
+function handleEditProfileSubmit(event) {
+  event.preventDefault();
+  const nameVal = document.getElementById('edit-profile-name').value;
+  const emailVal = document.getElementById('edit-profile-email').value;
+
+  const store = getStore();
+  if (appState.currentRole === 'teacher') {
+    store.teacherUser.name = nameVal.split(' ')[0];
+    store.teacherUser.fullName = nameVal;
+    store.teacherUser.email = emailVal;
+    appState.user = store.teacherUser;
+  } else {
+    store.currentUser.name = nameVal.split(' ')[0];
+    store.currentUser.fullName = nameVal;
+    store.currentUser.email = emailVal;
+    appState.user = store.currentUser;
+  }
+
+  saveStore(store);
+  updateTopBarUser();
+  updateProfileCards();
+  closeModal('modal-edit-profile');
+  showToast('Profile updated successfully!', 'success');
+}
+
+/* ==========================================
+   TEACHER ACTIONS: CREATE EXAM & AI GENERATOR
+   ========================================== */
+function openCreateExamModal() {
+  openModal('modal-create-exam');
+}
+
+function handleCreateExamSubmit(event) {
+  event.preventDefault();
+  const title = document.getElementById('new-exam-title').value;
+  const subject = document.getElementById('new-exam-subject').value;
+  const duration = parseInt(document.getElementById('new-exam-duration').value) || 15;
+  const marks = parseInt(document.getElementById('new-exam-marks').value) || 20;
+  const passing = parseInt(document.getElementById('new-exam-passing').value) || 10;
+
+  const qText = document.getElementById('new-q-text').value;
+  const opt0 = document.getElementById('new-opt-0').value;
+  const opt1 = document.getElementById('new-opt-1').value;
+  const opt2 = document.getElementById('new-opt-2').value;
+  const opt3 = document.getElementById('new-opt-3').value;
+  const correctIdx = parseInt(document.getElementById('new-correct-opt').value) || 0;
+  const topic = document.getElementById('new-q-topic').value || subject;
+  const expl = document.getElementById('new-q-expl').value || '';
+
+  const newExam = {
+    id: 'exam_' + Date.now(),
+    title,
+    subject,
+    description: `Assessment created by teacher covering ${topic}.`,
+    durationMinutes: duration,
+    totalMarks: marks,
+    passingMarks: passing,
+    topic,
+    questions: [
+      {
+        id: 1,
+        question: qText,
+        options: [opt0, opt1, opt2, opt3],
+        correctIndex: correctIdx,
+        marks: marks,
+        topic,
+        explanation: expl
+      }
+    ]
+  };
+
+  const store = getStore();
+  store.exams.push(newExam);
+  store.recentActivities.unshift({
+    text: `New exam created: ${title}`,
+    time: 'Just now',
+    type: 'created'
+  });
+  saveStore(store);
+
+  closeModal('modal-create-exam');
+  renderAvailableTests();
+  renderTeacherDashboardData();
+  showToast(`Exam "${title}" published successfully!`, 'success');
+}
+
+function openAIGeneratorModal() {
+  document.getElementById('ai-gen-loader').classList.add('hidden');
+  openModal('modal-ai-generator');
+}
+
+function simulateAIGeneration() {
+  const topic = document.getElementById('ai-gen-topic').value || 'Artificial Intelligence';
+  const loader = document.getElementById('ai-gen-loader');
+  loader.classList.remove('hidden');
+
+  setTimeout(() => {
+    const newExam = {
+      id: 'exam_ai_' + Date.now(),
+      title: `${topic} Quiz (AI Generated)`,
+      subject: 'Computer',
+      description: `Auto-generated interactive assessment on ${topic}.`,
+      durationMinutes: 15,
+      totalMarks: 20,
+      passingMarks: 10,
+      topic,
+      questions: [
+        {
+          id: 1,
+          question: `In the context of ${topic}, what is supervised learning?`,
+          options: [
+            'Learning without any training data',
+            'Learning using labeled training input-output pairs',
+            'Random algorithmic guessing',
+            'Hardware level GPU computation'
+          ],
+          correctIndex: 1,
+          marks: 4,
+          topic,
+          explanation: 'Supervised learning uses labeled training datasets to train algorithms to classify data or predict outcomes.'
+        },
+        {
+          id: 2,
+          question: 'Which neural network architecture is widely used for natural language processing?',
+          options: ['CNN', 'Transformer', 'Linear Perceptron', 'K-Means'],
+          correctIndex: 1,
+          marks: 4,
+          topic,
+          explanation: 'Transformers with self-attention mechanisms are the foundational architecture for state-of-the-art NLP models.'
+        },
+        {
+          id: 3,
+          question: 'What is overfitting in machine learning models?',
+          options: [
+            'Model performs well on training data but poorly on unseen test data',
+            'Model is too small to fit in memory',
+            'Model runs infinitely without converging',
+            'Model has zero parameters'
+          ],
+          correctIndex: 0,
+          marks: 4,
+          topic,
+          explanation: 'Overfitting occurs when a model learns noise in the training data rather than generalizing the underlying distribution.'
+        },
+        {
+          id: 4,
+          question: 'Which of the following is an unsupervised learning task?',
+          options: ['Sentiment classification', 'Clustering customer segments', 'Spam detection', 'Facial recognition'],
+          correctIndex: 1,
+          marks: 4,
+          topic,
+          explanation: 'Clustering identifies intrinsic groupings in unlabeled datasets without predefined categories.'
+        },
+        {
+          id: 5,
+          question: 'What metric measures the proportion of true positives among all actual positives?',
+          options: ['Precision', 'Recall / Sensitivity', 'F1-Score', 'Accuracy'],
+          correctIndex: 1,
+          marks: 4,
+          topic,
+          explanation: 'Recall is True Positives / (True Positives + False Negatives).'
+        }
+      ]
+    };
+
+    const store = getStore();
+    store.exams.push(newExam);
+    store.recentActivities.unshift({
+      text: `AI generated new exam: ${newExam.title}`,
+      time: 'Just now',
+      type: 'created'
+    });
+    saveStore(store);
+
+    loader.classList.add('hidden');
+    closeModal('modal-ai-generator');
+    renderAvailableTests();
+    renderTeacherDashboardData();
+    showToast(`AI generated 5 questions on "${topic}" and published test!`, 'success');
+  }, 1200);
+}
+
+function openScheduleModal() {
+  openModal('modal-schedule-exam');
+}
+
+function handleScheduleExamSubmit(event) {
+  event.preventDefault();
+  const examTitle = document.getElementById('sched-exam-select').value;
+  const dateVal = document.getElementById('sched-exam-date').value;
+  const timeVal = document.getElementById('sched-exam-time').value;
+  const batchVal = document.getElementById('sched-exam-batch').value;
+
+  const store = getStore();
+  const subject = examTitle.includes('Math') ? 'Mathematics' : examTitle.includes('Science') ? 'Science' : 'English';
+  
+  store.upcomingEvents.unshift({
+    examName: examTitle,
+    subject: subject,
+    dateTime: `${dateVal} at ${timeVal}`,
+    status: 'Scheduled'
+  });
+  
+  store.recentActivities.unshift({
+    text: `Scheduled session: ${examTitle} (${batchVal})`,
+    time: 'Just now',
+    type: 'created'
+  });
+
+  saveStore(store);
+  closeModal('modal-schedule-exam');
+  renderTeacherDashboardData();
+  showToast(`Successfully scheduled "${examTitle}"!`, 'success');
+}
+
+/* ==========================================
+   MODAL UTILITIES & TOASTS
+   ========================================== */
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.classList.add('hidden');
+}
+
+function showNotificationToast() {
+  showToast('Notifications: 1. Mathematics Quiz scheduled tomorrow at 10:00 AM. 2. Science test scores published.', 'info');
+}
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  let bg = 'bg-slate-900 text-white';
+  let icon = 'fa-circle-info text-blue-400';
+
+  if (type === 'success') {
+    bg = 'bg-emerald-900/90 text-emerald-100 border border-emerald-500/40';
+    icon = 'fa-circle-check text-emerald-400';
+  } else if (type === 'warning') {
+    bg = 'bg-amber-900/90 text-amber-100 border border-amber-500/40';
+    icon = 'fa-triangle-exclamation text-amber-400';
+  }
+
+  toast.className = `${bg} backdrop-blur-md px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-3 text-xs sm:text-sm font-medium transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto max-w-sm`;
+  toast.innerHTML = `
+    <i class="fa-solid ${icon} text-base shrink-0"></i>
+    <span class="flex-1">${message}</span>
+  `;
+
+  container.appendChild(toast);
+
+  // Animate in
+  setTimeout(() => {
+    toast.classList.remove('translate-y-2', 'opacity-0');
+  }, 50);
+
+  // Auto remove
+  setTimeout(() => {
+    toast.classList.add('opacity-0', 'translate-y-2');
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+</script>
+</body>
+</html>

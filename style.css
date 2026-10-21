@@ -1,0 +1,155 @@
+/* ExamNova Custom Styling */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-light: #EEF2FF;
+  --secondary: #7C3AED;
+  --accent: #2563EB;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --bg-gradient: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #1E3A8A 100%);
+  --card-bg: #FFFFFF;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: #F8FAFC;
+  color: #1E293B;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Glassmorphism & Modern Shadows */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-nav {
+  background: rgba(30, 27, 75, 0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modern-shadow {
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.08), 0 8px 10px -6px rgba(79, 70, 229, 0.04);
+}
+
+.modern-shadow-lg {
+  box-shadow: 0 20px 30px -10px rgba(79, 70, 229, 0.15), 0 10px 15px -5px rgba(79, 70, 229, 0.08);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Palette Circle Buttons */
+.palette-btn {
+  width: 38px;
+  height: 38px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.palette-btn:hover {
+  transform: translateY(-2px);
+}
+
+.palette-answered {
+  background-color: #10B981 !important;
+  color: white !important;
+  border-color: #059669 !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.palette-current {
+  background-color: #4F46E5 !important;
+  color: white !important;
+  border-color: #3730A3 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35);
+}
+
+.palette-unanswered {
+  background-color: #F1F5F9;
+  color: #64748B;
+  border: 1px solid #E2E8F0;
+}
+
+.palette-review {
+  background-color: #F59E0B !important;
+  color: white !important;
+  border-color: #D97706 !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+/* Radio Choice Custom Styling */
+.quiz-option {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.quiz-option:hover {
+  border-color: #818CF8;
+  background-color: #F5F3FF;
+}
+.quiz-option.selected {
+  border-color: #6366F1;
+  background-color: #EEF2FF;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+/* Animations */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.03); }
+}
+
+.pulse-timer {
+  animation: pulse-subtle 2s infinite;
+}
+
+/* Circular score ring animations */
+.circle-progress {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+/* Presentation Bar Animation */
+.presenter-bar {
+  background: linear-gradient(90deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
+  border-bottom: 2px solid #818CF8;
+}
+
+/* Print Friendly */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
